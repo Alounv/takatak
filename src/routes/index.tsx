@@ -2,7 +2,7 @@ import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Login } from "~/components/login";
 import { useGetCurrentUser } from "./layout";
-import { Welcome } from "~/components/welcome";
+import { Practice } from "~/components/practice";
 
 export default component$(() => {
   const { value: user } = useGetCurrentUser();
@@ -11,7 +11,7 @@ export default component$(() => {
     return <Login />;
   }
 
-  return <Welcome />;
+  return <Practice />;
 });
 
 export const head: DocumentHead = {
