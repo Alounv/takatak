@@ -21,6 +21,7 @@ const Word = ({
   currentIndex: number;
   hasError: boolean;
   word: string;
+  key: number;
 }) => {
   const cls = getClass(index, currentIndex, hasError);
   return <span class={`${cls} text-md`}>{word} </span>;
@@ -40,6 +41,7 @@ export const Text = ({
       <div>
         {words.map((word, i) => (
           <Word
+            key={i}
             index={i}
             currentIndex={currentIndex}
             hasError={hasError}

@@ -1,4 +1,5 @@
-import { NewError, errorsTable } from "~/server/db/schema";
+import type { NewError } from "~/server/db/schema";
+import { errorsTable } from "~/server/db/schema";
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
 import { dbConfig } from "~/server/db/client";
