@@ -7,24 +7,15 @@ import {
   selectPreset,
   updatePreset,
 } from "~/data/preset";
-import { getUserFromCookie } from "~/data/user";
 import { routeLoader$ } from "@builder.io/qwik-city";
-import { drizzle } from "drizzle-orm/neon-serverless";
-import { Pool } from "@neondatabase/serverless";
-import { dbConfig } from "~/server/db/client";
+import { getUserAndDb } from "./plugin@user";
 
 export const useCreateEmptyPreset = routeAction$(
   async ({ name }, { cookie, fail }) => {
     try {
-      const pool = new Pool(dbConfig);
-      const db = drizzle(pool);
-
-      const user = await getUserFromCookie(db, cookie);
+      const { user, pool, db } = await getUserAndDb(cookie);
       if (!user) {
-        return {
-          success: false,
-          error: "You must login to create preset",
-        };
+        return { success: false, error: "You must login to create preset" };
       }
       await createPreset(db, {
         userId: user.id,
@@ -51,15 +42,10 @@ export const useUpdatePreset = routeAction$(
     { cookie, fail },
   ) => {
     try {
-      const pool = new Pool(dbConfig);
-      const db = drizzle(pool);
+      const { user, pool, db } = await getUserAndDb(cookie);
 
-      const user = await getUserFromCookie(db, cookie);
       if (!user) {
-        return {
-          success: false,
-          error: "You must login to update preset",
-        };
+        return { success: false, error: "You must login to update preset" };
       }
       await updatePreset(db, {
         id,
@@ -89,15 +75,10 @@ export const useUpdatePreset = routeAction$(
 );
 
 export const useListPresets = routeLoader$(async ({ cookie }) => {
-  const pool = new Pool(dbConfig);
-  const db = drizzle(pool);
+  const { user, pool, db } = await getUserAndDb(cookie);
 
-  const user = await getUserFromCookie(db, cookie);
   if (!user) {
-    return {
-      success: false,
-      error: "You must login to list presets",
-    };
+    return { success: false, error: "You must login to list presets" };
   }
 
   const presets = await listUserPresets(db, user.id);
@@ -110,25 +91,19 @@ export const useListPresets = routeLoader$(async ({ cookie }) => {
 });
 
 export const useSelectedPreset = routeLoader$(async ({ cookie }) => {
-  const pool = new Pool(dbConfig);
-  const db = drizzle(pool);
+  const { user, pool, db } = await getUserAndDb(cookie);
 
-  const user = await getUserFromCookie(db, cookie);
   if (!user) {
-    return {
-      success: false,
-      error: "You must login to get preset",
-    };
+    return { success: false, error: "You must login to get preset" };
   }
 
   if (!user.selectedPresetId) {
-    return {
-      success: true,
-      error: "No preset selected",
-    };
+    return { success: true, error: "No preset selected" };
   }
 
   const preset = await getPreset(db, user.selectedPresetId);
+
+  await pool.end();
   return {
     success: true,
     data: preset,
@@ -138,15 +113,10 @@ export const useSelectedPreset = routeLoader$(async ({ cookie }) => {
 export const useSelectPreset = routeAction$(
   async ({ id }, { cookie, fail }) => {
     try {
-      const pool = new Pool(dbConfig);
-      const db = drizzle(pool);
+      const { user, pool, db } = await getUserAndDb(cookie);
 
-      const user = await getUserFromCookie(db, cookie);
       if (!user) {
-        return {
-          success: false,
-          error: "You must login to select preset",
-        };
+        return { success: false, error: "You must login to select preset" };
       }
       await selectPreset(db, { userId: user.id, presetId: id });
 
@@ -162,15 +132,10 @@ export const useSelectPreset = routeAction$(
 export const useDeletePreset = routeAction$(
   async ({ id }, { cookie, fail }) => {
     try {
-      const pool = new Pool(dbConfig);
-      const db = drizzle(pool);
+      const { user, pool, db } = await getUserAndDb(cookie);
 
-      const user = await getUserFromCookie(db, cookie);
       if (!user) {
-        return {
-          success: false,
-          error: "You must login to delete preset",
-        };
+        return { success: false, error: "You must login to delete preset" };
       }
 
       await pool.end();

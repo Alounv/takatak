@@ -1,18 +1,13 @@
 import { routeAction$, z, zod$ } from "@builder.io/qwik-city";
-import { Pool } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-serverless";
 import { createError } from "~/data/error";
 import { addErrorDate, createResult } from "~/data/result";
-import { getUserFromCookie } from "~/data/user";
-import { dbConfig } from "~/server/db/client";
+import { getUserAndDb } from "./plugin@user";
 
 export const useSaveData = routeAction$(
   async ({ word, duration }, { cookie, fail }) => {
     try {
-      const pool = new Pool(dbConfig);
-      const db = drizzle(pool);
+      const { user, pool, db } = await getUserAndDb(cookie);
 
-      const user = await getUserFromCookie(db, cookie);
       if (!user) {
         return {
           success: false,
@@ -27,6 +22,8 @@ export const useSaveData = routeAction$(
         duration,
         date,
       });
+
+      await pool.end();
       return { success: true };
     } catch (e: any) {
       console.error(e);
@@ -39,10 +36,8 @@ export const useSaveData = routeAction$(
 export const useSaveError = routeAction$(
   async ({ word, input }, { cookie, fail }) => {
     try {
-      const pool = new Pool(dbConfig);
-      const db = drizzle(pool);
+      const { user, pool, db } = await getUserAndDb(cookie);
 
-      const user = await getUserFromCookie(db, cookie);
       if (!user) {
         return {
           success: false,
