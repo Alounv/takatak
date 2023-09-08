@@ -2,6 +2,7 @@ import { routeAction$, z, zod$ } from "@builder.io/qwik-city";
 import {
   createPreset,
   deletePreset,
+  getPreset,
   listUserPresets,
   selectPreset,
   updatePreset,
@@ -87,6 +88,29 @@ export const useListPresets = routeLoader$(async ({ cookie }) => {
   return {
     success: true,
     data: presets,
+  };
+});
+
+export const useSelectedPreset = routeLoader$(async ({ cookie }) => {
+  const user = await getUserFromCookie(cookie);
+  if (!user) {
+    return {
+      success: false,
+      error: "You must login to get preset",
+    };
+  }
+
+  if (!user.selectedPresetId) {
+    return {
+      success: true,
+      error: "No preset selected",
+    };
+  }
+
+  const preset = await getPreset(user.selectedPresetId);
+  return {
+    success: true,
+    data: preset,
   };
 });
 

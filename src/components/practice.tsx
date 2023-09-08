@@ -8,13 +8,16 @@ import { Text } from "./text";
 import { InputArea } from "./input";
 import { getIsMatching } from "~/utils";
 import { useSaveData, useSaveError } from "~/routes/plugin@save";
+import { useSelectedPreset } from "~/routes/plugin@preset";
 
 export const Practice = component$(() => {
   const indexSignal = useSignal(0);
   const inputSignal = useSignal("");
   const startTime = useSignal(0);
   const lastErrorSignal = useSignal(-1);
-  const words = [" ", ...MockText.split(" ")];
+  const selectedPreset = useSelectedPreset();
+  const currentPreset = selectedPreset.value.data;
+  const words = [" ", ...(currentPreset?.text || "").split(" ")];
 
   const currentWord = useComputed$(() => {
     return words[indexSignal.value];
@@ -67,6 +70,8 @@ export const Practice = component$(() => {
     <div class="flex flex-col items-center gap-3">
       <div class="text-lg font-medium">Practice</div>
 
+      <div class="text-gray-500">{currentPreset?.name || "None"}</div>
+
       <Text
         words={words}
         currentIndex={indexSignal.value}
@@ -77,5 +82,3 @@ export const Practice = component$(() => {
     </div>
   );
 });
-
-const MockText = `a à acte aider air ajouter aller animal année appel après arrière aucun aussi autre avant avec avoir bas beaucoup besoin bien boîte bon cause ce certains ces changement chaque chaud chose comme comment construire côté dans de dehors déménagement deux différer dire dit donner droit eau écrire elle encore ensemble épeler essayer est allé est venu est et étaient était été être eu fabriqué faible faire fait faut fin forme garçon genre grand haut homme hommes ici il ils image interroger je jouer jour juste la là le les leur lieu ligne lire long lui lumière ma main maintenant mais maison manière même mère mettre moi monde montrer mot ne nom nombre notre nous nouveau obtenir ou où par partie partir penser père personnes petit peu peut phrase plus point port pour pourquoi pourrait première prendre près puis quand que qui regarder savoir seulement si signifier soi son sont sous suivre sur tel temps terre tour tous tout travail très trois trop trouver un utiliser venir vers vieux vivre voir volonté votre voudrais vouloir vous`;
