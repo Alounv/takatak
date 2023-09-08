@@ -2,11 +2,6 @@ import { component$, Slot } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
 
 import { Nav } from "~/components/nav";
-import { getUserFromCookie } from "~/data/user";
-
-export const useGetCurrentUser = routeLoader$(async ({ cookie }) => {
-  return getUserFromCookie(cookie);
-});
 
 export default component$(() => {
   return (

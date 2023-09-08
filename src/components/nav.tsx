@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { Profile } from "./profile";
-import { useGetCurrentUser } from "~/routes/layout";
 import { Logo } from "./logo";
+import { useGetCurrentUser } from "~/routes/plugin@user";
 
 const Start = component$(() => {
   return (

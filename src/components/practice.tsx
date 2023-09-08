@@ -4,23 +4,26 @@ import {
   useSignal,
   useVisibleTask$,
 } from "@builder.io/qwik";
-import { useAuthSession } from "~/routes/plugin@auth";
 import { Text } from "./text";
 import { InputArea } from "./input";
 import { getIsMatching } from "~/utils";
+import { useSaveData, useSaveError } from "~/routes/plugin@save";
+import { useGetCurrentUser } from "~/routes/plugin@user";
 
 export const Practice = component$(() => {
-  const userSignal = useAuthSession();
+  const { value: user } = useGetCurrentUser();
   const indexSignal = useSignal(0);
   const inputSignal = useSignal("");
   const startTime = useSignal(0);
   const lastErrorSignal = useSignal(-1);
-  const { user } = userSignal.value || {};
   const words = [" ", ...MockText.split(" ")];
 
   const currentWord = useComputed$(() => {
     return words[indexSignal.value];
   });
+
+  const saveResultAction = useSaveData();
+  const saveErrorAction = useSaveError();
 
   useVisibleTask$(({ track }) => {
     const isFinished = track(
@@ -29,9 +32,12 @@ export const Practice = component$(() => {
 
     if (isFinished) {
       if (currentWord.value !== " ") {
-        // Save result
         const duration = Date.now() - startTime.value;
-        console.log("validation", currentWord.value, duration);
+        saveResultAction.submit({
+          duration,
+          word: currentWord.value,
+          userId: user?.id,
+        });
       }
 
       // Reset state
@@ -51,8 +57,11 @@ export const Practice = component$(() => {
 
     if (lastErrorSignal.value !== indexSignal.value) {
       if (currentWord.value !== " ") {
-        // Save error
-        console.log("ERROR", currentWord.value, inputSignal.value);
+        saveErrorAction.submit({
+          word: currentWord.value,
+          input: inputSignal.value,
+          userId: user?.id,
+        });
         lastErrorSignal.value = indexSignal.value;
       }
     }

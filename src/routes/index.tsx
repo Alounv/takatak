@@ -1,8 +1,8 @@
 import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Login } from "~/components/login";
-import { useGetCurrentUser } from "./layout";
 import { Practice } from "~/components/practice";
+import { useGetCurrentUser } from "./plugin@user";
 
 export default component$(() => {
   const { value: user } = useGetCurrentUser();
