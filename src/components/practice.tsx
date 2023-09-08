@@ -22,21 +22,24 @@ export const Practice = component$(() => {
 
   const analytics = useValidatedWords();
   const measuredWords = analytics.value.data || [];
-  // const validatedWords = currentPreset
-  //   ? measuredWords
-  //       .filter((x) => x.speed >= currentPreset?.speed)
-  //       .map((x) => x.word)
-  //   : [];
+  const validatedWords = currentPreset
+    ? measuredWords
+        .filter((x) => x.speed >= currentPreset?.speed)
+        .map((x) => x.word)
+    : [];
 
   const presetWords = (currentPreset?.text || "").split(" ");
-  // const nonValidatedWords = presetWords.filter(
-  //   (x) => !validatedWords.includes(x),
-  // );
+  const nonValidatedWords = presetWords.filter(
+    (x) => !validatedWords.includes(x),
+  );
 
-  const words = [" ", ...presetWords];
+  const words = useComputed$(() => {
+    const shuffled = nonValidatedWords.sort(() => Math.random() - 0.5);
+    return [" ", ...shuffled];
+  });
 
   const currentWord = useComputed$(() => {
-    return words[indexSignal.value];
+    return words.value[indexSignal.value];
   });
 
   const saveResultAction = useSaveData();
@@ -89,14 +92,16 @@ export const Practice = component$(() => {
       <div class="text-gray-500">{currentPreset?.name || "None"}</div>
 
       <Text
-        words={words}
+        words={words.value}
         currentIndex={indexSignal.value}
         hasError={lastErrorSignal.value === indexSignal.value}
       />
 
       <InputArea index={indexSignal.value} inputSignal={inputSignal} />
 
-      <Analytics words={measuredWords} />
+      <Analytics
+        words={measuredWords.filter((w) => nonValidatedWords.includes(w.word))}
+      />
     </div>
   );
 });
