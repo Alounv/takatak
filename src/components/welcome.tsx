@@ -6,10 +6,13 @@ import {
 } from "@builder.io/qwik";
 import { useAuthSession } from "~/routes/plugin@auth";
 
-const getHasError = ({ target, input }: { target: string; input: string }) => {
-  const len = input.length;
-  return target.slice(0, len) !== input.slice(0, len);
-};
+export const getIsMatching = ({
+  target,
+  input,
+}: {
+  target: string;
+  input: string;
+}) => target.startsWith(input) || ["^", "¨"].includes(input.slice(-1));
 
 export const Welcome = component$(() => {
   const userSignal = useAuthSession();
@@ -40,8 +43,9 @@ export const Welcome = component$(() => {
       return;
     }
 
-    const hasError = track(() =>
-      getHasError({ target: currentWord.value, input: inputSignal.value }),
+    const hasError = track(
+      () =>
+        !getIsMatching({ target: currentWord.value, input: inputSignal.value }),
     );
 
     if (!hasError) return;
