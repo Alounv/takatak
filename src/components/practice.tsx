@@ -36,7 +36,6 @@ export const Practice = component$(() => {
         saveResultAction.submit({
           duration,
           word: currentWord.value,
-          userId: user?.id,
         });
       }
 
@@ -60,7 +59,6 @@ export const Practice = component$(() => {
         saveErrorAction.submit({
           word: currentWord.value,
           input: inputSignal.value,
-          userId: user?.id,
         });
         lastErrorSignal.value = indexSignal.value;
       }

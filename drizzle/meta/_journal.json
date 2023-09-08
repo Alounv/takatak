@@ -8,6 +8,12 @@
       "when": 1694160801393,
       "tag": "0000_mysterious_paladin",
       "breakpoints": false
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1694176176762,
+      "tag": "0001_fast_swarm"
     }
   ]
 }
