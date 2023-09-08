@@ -1,4 +1,4 @@
-export const TiiLogo = () => (
+export const Logo = () => (
   <svg
     class="h-12 w-12 bg-gray-700 p-1 rounded-full"
     xmlns="http://www.w3.org/2000/svg"

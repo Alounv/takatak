@@ -1,14 +1,14 @@
 import { component$ } from "@builder.io/qwik";
-import { TiiLogo } from "./tii";
 import { Profile } from "./profile";
 import { useGetCurrentUser } from "~/routes/layout";
+import { Logo } from "./logo";
 
 const Start = component$(() => {
   return (
     <div class="flex items-center">
       <div class="flex-shrink-0">
         <a href="/" title="tii" class="flex items-center gap-3">
-          <TiiLogo />
+          <Logo />
           <div class="text-white font-medium text-lg">This is it</div>
         </a>
       </div>
