@@ -9,6 +9,7 @@ import { InputArea } from "./input";
 import { getIsMatching } from "~/utils";
 import { useSaveData, useSaveError } from "~/routes/plugin@save";
 import { useSelectedPreset } from "~/routes/plugin@preset";
+import { useValidatedWords } from "~/routes/plugin@analytics";
 
 export const Practice = component$(() => {
   const indexSignal = useSignal(0);
@@ -25,6 +26,9 @@ export const Practice = component$(() => {
 
   const saveResultAction = useSaveData();
   const saveErrorAction = useSaveError();
+  const analytics = useValidatedWords();
+
+  console.log("analytics", analytics);
 
   useVisibleTask$(({ track }) => {
     const isFinished = track(
