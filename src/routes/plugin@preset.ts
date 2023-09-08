@@ -1,6 +1,7 @@
 import { routeAction$, z, zod$ } from "@builder.io/qwik-city";
 import {
   createPreset,
+  deletePreset,
   listUserPresets,
   selectPreset,
   updatePreset,
@@ -100,6 +101,25 @@ export const useSelectPreset = routeAction$(
         };
       }
       await selectPreset({ userId: user.id, presetId: id });
+    } catch (e: any) {
+      console.error(e);
+      fail(500, e.message);
+    }
+  },
+  zod$({ id: z.string() }),
+);
+
+export const useDeletePreset = routeAction$(
+  async ({ id }, { cookie, fail }) => {
+    try {
+      const user = await getUserFromCookie(cookie);
+      if (!user) {
+        return {
+          success: false,
+          error: "You must login to delete preset",
+        };
+      }
+      await deletePreset(id);
     } catch (e: any) {
       console.error(e);
       fail(500, e.message);

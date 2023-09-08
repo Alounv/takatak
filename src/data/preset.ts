@@ -91,3 +91,16 @@ export const selectPreset = async ({
   await pool.end();
   return updated[0];
 };
+
+export const deletePreset = async (id: string) => {
+  const pool = new Pool(dbConfig);
+  const db = drizzle(pool);
+
+  const deleted = await db
+    .delete(presetsTable)
+    .where(eq(presetsTable.id, id))
+    .returning();
+
+  await pool.end();
+  return deleted[0];
+};

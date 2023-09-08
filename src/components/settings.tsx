@@ -2,6 +2,7 @@ import { component$ } from "@builder.io/qwik";
 import { Form } from "@builder.io/qwik-city";
 import {
   useCreateEmptyPreset,
+  useDeletePreset,
   useListPresets,
   useSelectPreset,
   useUpdatePreset,
@@ -17,6 +18,7 @@ export const Settings = component$(() => {
   const selectedPresetId = user.value?.selectedPresetId;
   const presetsList = presets.value.data || [];
   const currentPreset = presetsList.find((p) => p.id === selectedPresetId);
+  const deleteAction = useDeletePreset();
 
   return (
     <div class="flex flex-col items-center gap-5">
@@ -41,7 +43,7 @@ export const Settings = component$(() => {
         {presetsList.map((p) => {
           const isSelected = p.id === selectedPresetId;
           return (
-            <div key={p.id}>
+            <div key={p.id} class="flex gap-2 items-center">
               {isSelected && <span>[ </span>}
               <label for={p.id}>{p.name}</label>
               {isSelected && <span> ]</span>}
@@ -55,6 +57,15 @@ export const Settings = component$(() => {
                   selectAction.submit({ id: p.id });
                 }}
               />
+              <button
+                class="rounded-lg text-sm font-semibold px-2 py-1 border border-gray-400 text-gray-500 hover:bg-gray-200"
+                disabled={isSelected}
+                onClick$={() => {
+                  deleteAction.submit({ id: p.id });
+                }}
+              >
+                delete
+              </button>
             </div>
           );
         })}
@@ -66,10 +77,10 @@ export const Settings = component$(() => {
 });
 
 export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
-  const action = useUpdatePreset();
+  const updateAction = useUpdatePreset();
 
   return (
-    <Form action={action} class="flex flex-col gap-1 w-full">
+    <Form action={updateAction} class="flex flex-col gap-2 w-full">
       <input type="hidden" name="id" value={preset.id} />
       <div class="flex gap-1">
         <div class="flex flex-col gap-1">
@@ -86,12 +97,14 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
         <textarea class="flex-1" name="text" value={preset.text} />
       </div>
 
-      <button
-        type="submit"
-        class="rounded-lg text-sm font-semibold py-2  px-4 bg-sky-600 text-white hover:bg-sky-700 self-end"
-      >
-        update
-      </button>
+      <div class="self-end flex gap-1">
+        <button
+          type="submit"
+          class="rounded-lg text-sm font-semibold py-2  px-4 bg-sky-600 text-white hover:bg-sky-700"
+        >
+          save
+        </button>
+      </div>
     </Form>
   );
 });
