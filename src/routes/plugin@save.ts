@@ -1,20 +1,27 @@
 import { routeAction$, z, zod$ } from "@builder.io/qwik-city";
+import { Pool } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-serverless";
 import { createError } from "~/data/error";
 import { addErrorDate, createResult } from "~/data/result";
 import { getUserFromCookie } from "~/data/user";
+import { dbConfig } from "~/server/db/client";
 
 export const useSaveData = routeAction$(
   async ({ word, duration }, { cookie, fail }) => {
-    const date = new Date().toISOString();
     try {
-      const user = await getUserFromCookie(cookie);
+      const pool = new Pool(dbConfig);
+      const db = drizzle(pool);
+
+      const user = await getUserFromCookie(db, cookie);
       if (!user) {
         return {
           success: false,
           error: "You must login to save result",
         };
       }
-      await createResult({
+
+      const date = new Date().toISOString();
+      await createResult(db, {
         userId: user.id,
         word,
         duration,
@@ -31,26 +38,32 @@ export const useSaveData = routeAction$(
 
 export const useSaveError = routeAction$(
   async ({ word, input }, { cookie, fail }) => {
-    const date = new Date().toISOString();
     try {
-      const user = await getUserFromCookie(cookie);
+      const pool = new Pool(dbConfig);
+      const db = drizzle(pool);
+
+      const user = await getUserFromCookie(db, cookie);
       if (!user) {
         return {
           success: false,
           error: "You must login to save error",
         };
       }
-      await createError({
+
+      const date = new Date().toISOString();
+      await createError(db, {
         userId: user.id,
         word,
         input,
         date,
       });
-      await addErrorDate({
+      await addErrorDate(db, {
         userId: user.id,
         word,
         errorDate: date,
       });
+
+      await pool.end();
       return { success: true };
     } catch (e: any) {
       console.error(e);

@@ -9,18 +9,24 @@ import {
 } from "~/data/preset";
 import { getUserFromCookie } from "~/data/user";
 import { routeLoader$ } from "@builder.io/qwik-city";
+import { drizzle } from "drizzle-orm/neon-serverless";
+import { Pool } from "@neondatabase/serverless";
+import { dbConfig } from "~/server/db/client";
 
 export const useCreateEmptyPreset = routeAction$(
   async ({ name }, { cookie, fail }) => {
     try {
-      const user = await getUserFromCookie(cookie);
+      const pool = new Pool(dbConfig);
+      const db = drizzle(pool);
+
+      const user = await getUserFromCookie(db, cookie);
       if (!user) {
         return {
           success: false,
           error: "You must login to create preset",
         };
       }
-      await createPreset({
+      await createPreset(db, {
         userId: user.id,
         name,
         text: "",
@@ -28,6 +34,8 @@ export const useCreateEmptyPreset = routeAction$(
         speed: 30,
         repetitions: 3,
       });
+
+      await pool.end();
       return { success: true };
     } catch (e: any) {
       console.error(e);
@@ -43,14 +51,17 @@ export const useUpdatePreset = routeAction$(
     { cookie, fail },
   ) => {
     try {
-      const user = await getUserFromCookie(cookie);
+      const pool = new Pool(dbConfig);
+      const db = drizzle(pool);
+
+      const user = await getUserFromCookie(db, cookie);
       if (!user) {
         return {
           success: false,
           error: "You must login to update preset",
         };
       }
-      await updatePreset({
+      await updatePreset(db, {
         id,
         userId: user.id,
         name,
@@ -59,6 +70,8 @@ export const useUpdatePreset = routeAction$(
         ...(speed && { speed: parseInt(speed) }),
         ...(repetitions && { repetitions: parseInt(repetitions) }),
       });
+
+      await pool.end();
       return { success: true };
     } catch (e: any) {
       console.error(e);
@@ -76,7 +89,10 @@ export const useUpdatePreset = routeAction$(
 );
 
 export const useListPresets = routeLoader$(async ({ cookie }) => {
-  const user = await getUserFromCookie(cookie);
+  const pool = new Pool(dbConfig);
+  const db = drizzle(pool);
+
+  const user = await getUserFromCookie(db, cookie);
   if (!user) {
     return {
       success: false,
@@ -84,7 +100,9 @@ export const useListPresets = routeLoader$(async ({ cookie }) => {
     };
   }
 
-  const presets = await listUserPresets(user.id);
+  const presets = await listUserPresets(db, user.id);
+
+  await pool.end();
   return {
     success: true,
     data: presets,
@@ -92,7 +110,10 @@ export const useListPresets = routeLoader$(async ({ cookie }) => {
 });
 
 export const useSelectedPreset = routeLoader$(async ({ cookie }) => {
-  const user = await getUserFromCookie(cookie);
+  const pool = new Pool(dbConfig);
+  const db = drizzle(pool);
+
+  const user = await getUserFromCookie(db, cookie);
   if (!user) {
     return {
       success: false,
@@ -107,7 +128,7 @@ export const useSelectedPreset = routeLoader$(async ({ cookie }) => {
     };
   }
 
-  const preset = await getPreset(user.selectedPresetId);
+  const preset = await getPreset(db, user.selectedPresetId);
   return {
     success: true,
     data: preset,
@@ -117,14 +138,19 @@ export const useSelectedPreset = routeLoader$(async ({ cookie }) => {
 export const useSelectPreset = routeAction$(
   async ({ id }, { cookie, fail }) => {
     try {
-      const user = await getUserFromCookie(cookie);
+      const pool = new Pool(dbConfig);
+      const db = drizzle(pool);
+
+      const user = await getUserFromCookie(db, cookie);
       if (!user) {
         return {
           success: false,
           error: "You must login to select preset",
         };
       }
-      await selectPreset({ userId: user.id, presetId: id });
+      await selectPreset(db, { userId: user.id, presetId: id });
+
+      await pool.end();
     } catch (e: any) {
       console.error(e);
       fail(500, e.message);
@@ -136,14 +162,19 @@ export const useSelectPreset = routeAction$(
 export const useDeletePreset = routeAction$(
   async ({ id }, { cookie, fail }) => {
     try {
-      const user = await getUserFromCookie(cookie);
+      const pool = new Pool(dbConfig);
+      const db = drizzle(pool);
+
+      const user = await getUserFromCookie(db, cookie);
       if (!user) {
         return {
           success: false,
           error: "You must login to delete preset",
         };
       }
-      await deletePreset(id);
+
+      await pool.end();
+      await deletePreset(db, id);
     } catch (e: any) {
       console.error(e);
       fail(500, e.message);

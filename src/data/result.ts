@@ -1,40 +1,32 @@
-import { dbConfig } from "~/server/db/client";
 import type { NewResult } from "~/server/db/schema";
 import { resultsTable } from "~/server/db/schema";
-import { Pool } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-serverless";
+import type { NeonDatabase } from "drizzle-orm/neon-serverless";
 import { and, eq, isNull } from "drizzle-orm/expressions";
 
-export async function createResult({
-  userId,
-  word,
-  duration,
-  date,
-}: NewResult) {
-  const pool = new Pool(dbConfig);
-  const db = drizzle(pool);
-
+export async function createResult(
+  db: NeonDatabase,
+  { userId, word, duration, date }: NewResult,
+) {
   const inserted = await db
     .insert(resultsTable)
     .values({ userId, word, duration, date })
     .returning();
 
-  await pool.end();
   return inserted[0];
 }
 
-export async function addErrorDate({
-  userId,
-  word,
-  errorDate,
-}: {
-  userId: string;
-  word: string;
-  errorDate: string;
-}) {
-  const pool = new Pool(dbConfig);
-  const db = drizzle(pool);
-
+export async function addErrorDate(
+  db: NeonDatabase,
+  {
+    userId,
+    word,
+    errorDate,
+  }: {
+    userId: string;
+    word: string;
+    errorDate: string;
+  },
+) {
   const updated = await db
     .update(resultsTable)
     .set({ errorDate })
@@ -47,6 +39,5 @@ export async function addErrorDate({
     )
     .returning();
 
-  await pool.end();
   return updated;
 }
