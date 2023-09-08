@@ -45,12 +45,16 @@ export async function addErrorDate(
 
 export async function getAnalyticsPerWord(
   db: NeonDatabase,
-  { userId, repetitions }: { userId: string; repetitions: number },
+  {
+    userId,
+    repetitions,
+    currentWords,
+  }: { userId: string; repetitions: number; currentWords: string[] },
 ) {
   const results = await db
     .select({
       count: sql<number>`count(${resultsTable.id})`,
-      duration: sql<number>`min(${resultsTable.duration})`,
+      duration: sql<number>`max(${resultsTable.duration})`,
       word: resultsTable.word,
     })
     .from(resultsTable)
@@ -58,14 +62,12 @@ export async function getAnalyticsPerWord(
     .groupBy((r) => r.word);
 
   const filteredResults = results
-    .filter((r) => r.count >= repetitions)
+    .filter((r) => r.count >= repetitions && currentWords.includes(r.word))
     .map((r) => ({
       word: r.word,
       speed: ((r.word.length / (r.duration / 1000)) * 60) / 5,
     }))
     .sort((a, b) => b.speed - a.speed);
-
-  console.log(filteredResults);
 
   return filteredResults;
 }
