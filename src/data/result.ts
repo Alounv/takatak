@@ -54,19 +54,21 @@ export async function getAnalyticsPerWord(
   const results = await db
     .select({
       count: sql<number>`count(${resultsTable.id})`,
-      duration: sql<number>`max(${resultsTable.duration})`,
+      duration: sql<number>`avg(${resultsTable.duration})`,
       word: resultsTable.word,
     })
     .from(resultsTable)
     .where(and(eq(resultsTable.userId, userId), isNull(resultsTable.errorDate)))
-    .groupBy((r) => r.word);
+    .groupBy(resultsTable.word);
 
   const filteredResults = results
     .filter((r) => r.count >= repetitions && currentWords.includes(r.word))
-    .map((r) => ({
-      word: r.word,
-      speed: ((r.word.length / (r.duration / 1000)) * 60) / 5,
-    }))
+    .map((r) => {
+      return {
+        word: r.word,
+        speed: (((r.word.length + 1) / (r.duration / 1000)) * 60) / 5,
+      };
+    })
     .sort((a, b) => b.speed - a.speed);
 
   return filteredResults;
