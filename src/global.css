@@ -1,0 +1,17 @@
+/**
+ * Tailwind CSS imports
+ * View the full documentation at https://tailwindcss.com
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  height: 100vh;
+  height: 100svh;
+  background: linear-gradient(
+    90deg,
+    rgba(24, 182, 246, 0.3) 0%,
+    rgba(172, 127, 244, 0.3) 100%
+  );
+}
