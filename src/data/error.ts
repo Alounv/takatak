@@ -1,18 +1,15 @@
 import type { NewError } from "~/server/db/schema";
 import { errorsTable } from "~/server/db/schema";
-import { Pool } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-serverless";
-import { dbConfig } from "~/server/db/client";
+import type { NeonDatabase } from "drizzle-orm/neon-serverless";
 
-export async function createError({ userId, word, input, date }: NewError) {
-  const pool = new Pool(dbConfig);
-  const db = drizzle(pool);
-
+export async function createError(
+  db: NeonDatabase,
+  { userId, word, input, date }: NewError,
+) {
   const inserted = await db
     .insert(errorsTable)
     .values({ userId, word, input, date })
     .returning();
 
-  await pool.end();
   return inserted[0];
 }
