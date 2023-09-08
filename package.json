@@ -1,8 +1,8 @@
 {
-  "name": "this-is-it",
-  "description": "This is it",
+  "name": "takatak",
+  "description": "Takatak",
   "engines": {
-    "node": ">=15.0.0"
+    "node": "18.0.0"
   },
   "private": true,
   "scripts": {
@@ -12,21 +12,21 @@
     "build.server": "vite build -c adapters/vercel-edge/vite.config.ts",
     "build.types": "tsc --incremental --noEmit",
     "deploy": "vercel deploy",
-    "deploy:fly": "ORIGIN=https://tii.fly.dev/ node server/entry.fastify",
     "dev": "vite --mode ssr",
     "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
+    "generate": "drizzle-kit generate:pg",
     "lint": "eslint \"src/**/*.ts*\"",
+    "migrate": "tsx migrate.ts",
     "preview": "qwik build preview && vite preview --open",
-    "setup": "prisma:generate && prisma:migrate",
     "start": "vite --open --mode ssr",
     "qwik": "qwik"
   },
   "devDependencies": {
     "@auth/core": "0.5.1",
-    "@builder.io/qwik-auth": "0.0.5",
     "@builder.io/qwik": "0.25.0",
+    "@builder.io/qwik-auth": "0.0.5",
     "@builder.io/qwik-city": "0.7.1",
     "@tailwindcss/forms": "0.5.3",
     "@types/compression": "1.7.2",
@@ -36,11 +36,14 @@
     "@typescript-eslint/parser": "5.57.0",
     "autoprefixer": "10.4.14",
     "compression": "1.7.4",
+    "dotenv": "^16.3.1",
     "drizzle-kit": "0.17.1",
     "eslint": "8.37.0",
     "eslint-plugin-qwik": "0.100.0",
     "postcss": "8.4.21",
+    "postgres": "^3.3.5",
     "prettier": "2.8.7",
+    "tsx": "^3.12.8",
     "typescript": "5.0.3",
     "undici": "5.21.0",
     "vercel": "28.18.3",
@@ -48,10 +51,10 @@
     "vite-tsconfig-paths": "4.0.7"
   },
   "dependencies": {
-    "tailwindcss": "3.3.1",
+    "@neondatabase/serverless": "0.2.9",
     "drizzle-orm": "0.23.4",
     "openai": "3.2.1",
-    "zod": "3.21.4",
-    "@neondatabase/serverless": "0.2.9"
+    "tailwindcss": "3.3.1",
+    "zod": "3.21.4"
   }
 }

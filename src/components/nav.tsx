@@ -7,15 +7,15 @@ const Start = component$(() => {
   return (
     <div class="flex items-center">
       <div class="flex-shrink-0">
-        <a href="/" title="tii" class="flex items-center gap-3">
+        <a href="/" title="takatak" class="flex items-center gap-3">
           <Logo />
-          <div class="text-white font-medium text-lg">This is it</div>
+          <div class="text-white font-medium text-lg">Taka-ta-tak</div>
         </a>
       </div>
 
       <div class="ml-5 flex items-baseline space-x-4">
         <a
-          href="https://github.com/Alounv/tii"
+          href="https://github.com/Alounv/takatak"
           target="_blank"
           class="text-gray-400 hover:bg-gray-700 hover:text-white rounded-md px-2 py-2 text-sm"
         >
