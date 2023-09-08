@@ -15,11 +15,13 @@ export const Welcome = component$(() => {
   const userSignal = useAuthSession();
   const indexSignal = useSignal(0);
   const inputSignal = useSignal("");
+  const startTime = useSignal(0);
   const lastErrorSignal = useSignal(-1);
   const { user } = userSignal.value || {};
+  const words = [" ", ...MockText.split(" ")];
 
   const currentWord = useComputed$(() => {
-    return MockText.split(" ")[indexSignal.value];
+    return words[indexSignal.value];
   });
 
   useVisibleTask$(({ track }) => {
@@ -28,9 +30,13 @@ export const Welcome = component$(() => {
     );
 
     if (isFinished) {
-      console.log("validation", currentWord.value);
+      const duration = Date.now() - startTime.value;
+      if (currentWord.value !== " ") {
+        console.log("validation", currentWord.value, duration);
+      }
       inputSignal.value = "";
       indexSignal.value++;
+      startTime.value = Date.now();
       return;
     }
 
@@ -41,8 +47,10 @@ export const Welcome = component$(() => {
     if (!hasError) return;
 
     if (lastErrorSignal.value !== indexSignal.value) {
-      console.log("ERROR", currentWord.value, inputSignal.value);
-      lastErrorSignal.value = indexSignal.value;
+      if (currentWord.value !== " ") {
+        console.log("ERROR", currentWord.value, inputSignal.value);
+        lastErrorSignal.value = indexSignal.value;
+      }
     }
   });
 
@@ -50,11 +58,19 @@ export const Welcome = component$(() => {
     <div class="flex flex-col items-center gap-3">
       <div>{`Welcome ${user?.name}`}</div>
       <Text
-        text={MockText}
+        words={words}
         currentIndex={indexSignal.value}
         hasError={lastErrorSignal.value === indexSignal.value}
       />
-      <input type="text" bind:value={inputSignal} />
+
+      <div class="flex gap-2">
+        {indexSignal.value === 0 && (
+          <div class="bg-sky-500 text-white py-1 px-4 rounded flex items-center">
+            {`press space twice to start`}
+          </div>
+        )}
+        <input type="text" bind:value={inputSignal} />
+      </div>
     </div>
   );
 });
@@ -78,24 +94,26 @@ const getClass = (index: number, currentIndex: number, hasError: boolean) => {
 };
 
 const Text = ({
-  text,
+  words,
   currentIndex,
   hasError,
 }: {
-  text: string;
+  words: string[];
   currentIndex: number;
   hasError: boolean;
 }) => {
   return (
-    <div>
-      {text.split(" ").map((word, i) => {
-        const cls = getClass(i, currentIndex, hasError);
-        return (
-          <span key={i} class={`${cls} text-md`}>
-            {word}{" "}
-          </span>
-        );
-      })}
+    <div class="flex flex-col items-center gap-1">
+      <div>
+        {words.map((word, i) => {
+          const cls = getClass(i, currentIndex, hasError);
+          return (
+            <span key={i} class={`${cls} text-md`}>
+              {word}{" "}
+            </span>
+          );
+        })}
+      </div>
     </div>
   );
 };
