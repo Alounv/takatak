@@ -39,3 +39,18 @@ export const errorsTable = pgTable("errors", {
 
 export type Error = InferModel<typeof errorsTable>;
 export type NewError = InferModel<typeof errorsTable, "insert">;
+
+// --- PRESET 
+
+export const presetsTable = pgTable("presets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => usersTable.id).notNull(),
+  name: text("name").notNull(),
+  text: text("text").notNull(),
+  sessionLength: integer("session_length").notNull(),
+  speed: integer("speed").notNull(),
+  repetitions: integer("repetitions").notNull(),
+});
+
+export type Preset = InferModel<typeof presetsTable>;
+export type NewPreset = InferModel<typeof presetsTable, "insert">;

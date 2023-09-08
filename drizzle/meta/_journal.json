@@ -14,6 +14,12 @@
       "version": "5",
       "when": 1694176176762,
       "tag": "0001_fast_swarm"
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1694178039963,
+      "tag": "0002_keen_pestilence"
     }
   ]
 }

@@ -48,5 +48,5 @@ export async function addErrorDate({
     .returning();
 
   await pool.end();
-  return updated[0];
+  return updated;
 }
