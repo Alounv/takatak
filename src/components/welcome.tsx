@@ -1,18 +1,50 @@
-import { component$, useSignal } from "@builder.io/qwik";
+import {
+  component$,
+  useComputed$,
+  useSignal,
+  useVisibleTask$,
+} from "@builder.io/qwik";
 import { useAuthSession } from "~/routes/plugin@auth";
+
+const getHasError = ({ target, input }: { target: string; input: string }) => {
+  const len = input.length;
+  return target.slice(0, len) !== input.slice(0, len);
+};
 
 export const Welcome = component$(() => {
   const userSignal = useAuthSession();
   const indexSignal = useSignal(0);
   const inputSignal = useSignal("");
+  const lastErrorSignal = useSignal(-1);
   const { user } = userSignal.value || {};
 
-  const currentWord = MockText.split(" ")[indexSignal.value];
+  const currentWord = useComputed$(() => {
+    return MockText.split(" ")[indexSignal.value];
+  });
 
-  if (inputSignal.value === currentWord + " ") {
-    inputSignal.value = "";
-    indexSignal.value++;
-  }
+  useVisibleTask$(({ track }) => {
+    const isFinished = track(
+      () => inputSignal.value === currentWord.value + " ",
+    );
+
+    if (isFinished) {
+      console.log("validation", currentWord.value);
+      inputSignal.value = "";
+      indexSignal.value++;
+      return;
+    }
+
+    const hasError = track(() =>
+      getHasError({ target: currentWord.value, input: inputSignal.value }),
+    );
+
+    if (!hasError) return;
+
+    if (lastErrorSignal.value !== indexSignal.value) {
+      console.log("ERROR", currentWord.value, inputSignal.value);
+      lastErrorSignal.value = indexSignal.value;
+    }
+  });
 
   return (
     <div class="flex flex-col items-center gap-3">
@@ -20,7 +52,7 @@ export const Welcome = component$(() => {
       <Text
         text={MockText}
         currentIndex={indexSignal.value}
-        input={inputSignal.value}
+        hasError={lastErrorSignal.value === indexSignal.value}
       />
       <input type="text" bind:value={inputSignal} />
     </div>
@@ -45,24 +77,18 @@ const getClass = (index: number, currentIndex: number, hasError: boolean) => {
   return CLS.future;
 };
 
-const getHasError = ({ target, input }: { target: string; input: string }) => {
-  const len = input.length;
-  return target.slice(0, len) !== input.slice(0, len);
-};
-
 const Text = ({
   text,
   currentIndex,
-  input,
+  hasError,
 }: {
   text: string;
   currentIndex: number;
-  input: string;
+  hasError: boolean;
 }) => {
   return (
     <div>
       {text.split(" ").map((word, i) => {
-        const hasError = getHasError({ target: word, input });
         const cls = getClass(i, currentIndex, hasError);
         return (
           <span key={i} class={`${cls} text-md`}>
