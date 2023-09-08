@@ -9,6 +9,7 @@ import { InputArea } from "./input";
 import { getIsMatching } from "~/utils";
 import { useSaveData, useSaveError } from "~/routes/plugin@save";
 import { useSelectedPreset } from "~/routes/plugin@preset";
+import { Analytics } from "./analytics";
 import { useValidatedWords } from "~/routes/plugin@analytics";
 
 export const Practice = component$(() => {
@@ -18,7 +19,21 @@ export const Practice = component$(() => {
   const lastErrorSignal = useSignal(-1);
   const selectedPreset = useSelectedPreset();
   const currentPreset = selectedPreset.value.data;
-  const words = [" ", ...(currentPreset?.text || "").split(" ")];
+
+  const analytics = useValidatedWords();
+  const measuredWords = analytics.value.data || [];
+  // const validatedWords = currentPreset
+  //   ? measuredWords
+  //       .filter((x) => x.speed >= currentPreset?.speed)
+  //       .map((x) => x.word)
+  //   : [];
+
+  const presetWords = (currentPreset?.text || "").split(" ");
+  // const nonValidatedWords = presetWords.filter(
+  //   (x) => !validatedWords.includes(x),
+  // );
+
+  const words = [" ", ...presetWords];
 
   const currentWord = useComputed$(() => {
     return words[indexSignal.value];
@@ -26,9 +41,6 @@ export const Practice = component$(() => {
 
   const saveResultAction = useSaveData();
   const saveErrorAction = useSaveError();
-  const analytics = useValidatedWords();
-
-  console.log("analytics", analytics);
 
   useVisibleTask$(({ track }) => {
     const isFinished = track(
@@ -83,6 +95,8 @@ export const Practice = component$(() => {
       />
 
       <InputArea index={indexSignal.value} inputSignal={inputSignal} />
+
+      <Analytics words={measuredWords} />
     </div>
   );
 });

@@ -12,9 +12,9 @@ const databaseUrl = drizzle(
 const main = async () => {
   try {
     await migrate(databaseUrl, { migrationsFolder: "drizzle" });
-    console.log("Migration complete");
+    console.info("Migration complete");
   } catch (error) {
-    console.log(error);
+    console.info(error);
   }
   process.exit(0);
 };
