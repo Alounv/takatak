@@ -8,10 +8,8 @@ import { Text } from "./text";
 import { InputArea } from "./input";
 import { getIsMatching } from "~/utils";
 import { useSaveData, useSaveError } from "~/routes/plugin@save";
-import { useGetCurrentUser } from "~/routes/plugin@user";
 
 export const Practice = component$(() => {
-  const { value: user } = useGetCurrentUser();
   const indexSignal = useSignal(0);
   const inputSignal = useSignal("");
   const startTime = useSignal(0);
@@ -67,7 +65,7 @@ export const Practice = component$(() => {
 
   return (
     <div class="flex flex-col items-center gap-3">
-      <div>{`Welcome ${user?.name}`}</div>
+      <div class="text-lg font-medium">Practice</div>
 
       <Text
         words={words}

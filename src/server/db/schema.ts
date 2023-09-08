@@ -54,3 +54,12 @@ export const presetsTable = pgTable("presets", {
 
 export type Preset = InferModel<typeof presetsTable>;
 export type NewPreset = InferModel<typeof presetsTable, "insert">;
+
+// --- SELECTED PRESET ---
+
+export const selectedPresetsTable = pgTable("selected_presets", {
+  userId: uuid("user_id").primaryKey().references(() => usersTable.id).notNull(),
+  presetId: uuid("preset_id").references(() => presetsTable.id).notNull(),
+});
+
+export type SelectedPreset = InferModel<typeof selectedPresetsTable>;

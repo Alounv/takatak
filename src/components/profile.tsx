@@ -20,7 +20,7 @@ export const Profile = component$(({ user }: { user: User }) => {
   );
 
   return (
-    <div class="ml-4 flex items-center md:ml-6">
+    <div class="flex items-center">
       <div class="relative ml-3">
         <div>
           <button

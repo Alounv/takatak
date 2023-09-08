@@ -1,5 +1,7 @@
 import { dbConfig } from "~/server/db/client";
-import { NewPreset, presetsTable } from "~/server/db/schema";
+import type { NewPreset } from "~/server/db/schema";
+import { selectedPresetsTable } from "~/server/db/schema";
+import { presetsTable } from "~/server/db/schema";
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
 import { eq } from "drizzle-orm/expressions";
@@ -50,6 +52,7 @@ export const getPreset = async (id: string) => {
     .from(presetsTable)
     .where(eq(presetsTable.id, id));
 
+  await pool.end();
   return preset[0];
 };
 
@@ -62,5 +65,29 @@ export const listUserPresets = async (userId: string) => {
     .from(presetsTable)
     .where(eq(presetsTable.userId, userId));
 
+  await pool.end();
   return presets;
+};
+
+export const selectPreset = async ({
+  userId,
+  presetId,
+}: {
+  userId: string;
+  presetId: string;
+}) => {
+  const pool = new Pool(dbConfig);
+  const db = drizzle(pool);
+
+  const updated = await db
+    .insert(selectedPresetsTable)
+    .values({ userId, presetId })
+    .onConflictDoUpdate({
+      target: selectedPresetsTable.userId,
+      set: { presetId },
+    })
+    .returning();
+
+  await pool.end();
+  return updated[0];
 };

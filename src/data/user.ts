@@ -4,6 +4,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm/expressions";
 import { dbConfig } from "~/server/db/client";
 import type { NewUser, User } from "~/server/db/schema";
+import { selectedPresetsTable } from "~/server/db/schema";
 import { usersTable } from "~/server/db/schema";
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
@@ -15,10 +16,17 @@ export async function getUserByEmail(email: User["email"]) {
   const found = await db
     .select()
     .from(usersTable)
-    .where(eq(usersTable.email, email));
+    .where(eq(usersTable.email, email))
+    .leftJoin(
+      selectedPresetsTable,
+      eq(selectedPresetsTable.userId, usersTable.id),
+    );
 
   await pool.end();
-  return found[0];
+  return {
+    ...found[0].users,
+    selectedPresetId: found[0].selected_presets?.presetId,
+  };
 }
 
 export async function createUser({ email, name, avatar_url }: NewUser) {

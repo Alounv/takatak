@@ -1,11 +1,14 @@
 import { component$ } from "@builder.io/qwik";
 import { Profile } from "./profile";
-import { Logo } from "./logo";
+import { Logo, Settings } from "./logo";
 import { useGetCurrentUser } from "~/routes/plugin@user";
+
+const LINK_STYLE =
+  "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm";
 
 const Start = component$(() => {
   return (
-    <div class="flex items-center">
+    <div class="flex items-center flex-1">
       <div class="flex-shrink-0">
         <a href="/" title="takatak" class="flex items-center gap-3">
           <Logo />
@@ -13,13 +16,20 @@ const Start = component$(() => {
         </a>
       </div>
 
-      <div class="ml-5 flex items-baseline space-x-4">
+      <div class="ml-2 flex items-baseline space-x-4">
+        <a href="/settings" class={`${LINK_STYLE} flex gap-2 items-center`}>
+          <Settings />
+          Settings
+        </a>
+      </div>
+
+      <div class="ml-auto flex items-baseline space-x-4">
         <a
           href="https://github.com/Alounv/takatak"
           target="_blank"
-          class="text-gray-400 hover:bg-gray-700 hover:text-white rounded-md px-2 py-2 text-sm"
+          class={LINK_STYLE}
         >
-          Github
+          github
         </a>
       </div>
     </div>

@@ -20,6 +20,12 @@
       "version": "5",
       "when": 1694178039963,
       "tag": "0002_keen_pestilence"
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1694183600135,
+      "tag": "0003_rare_omega_sentinel"
     }
   ]
 }
