@@ -6,7 +6,7 @@ import { getUserAndDb } from "./plugin@user";
 export const useSaveData = routeAction$(
   async ({ word, duration }, { cookie, fail }) => {
     try {
-      const { user, pool, db } = await getUserAndDb(cookie);
+      const { user, db } = await getUserAndDb(cookie);
 
       if (!user) {
         return {
@@ -23,7 +23,6 @@ export const useSaveData = routeAction$(
         date,
       });
 
-      await pool.end();
       return { success: true };
     } catch (e: any) {
       console.error(e);
@@ -36,7 +35,7 @@ export const useSaveData = routeAction$(
 export const useSaveError = routeAction$(
   async ({ word, input }, { cookie, fail }) => {
     try {
-      const { user, pool, db } = await getUserAndDb(cookie);
+      const { user, db } = await getUserAndDb(cookie);
 
       if (!user) {
         return {
@@ -58,7 +57,6 @@ export const useSaveError = routeAction$(
         errorDate: date,
       });
 
-      await pool.end();
       return { success: true };
     } catch (e: any) {
       console.error(e);

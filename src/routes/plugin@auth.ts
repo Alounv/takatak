@@ -3,9 +3,9 @@ import GitHub from "@auth/core/providers/github";
 import type { Provider } from "@auth/core/providers";
 import { createUser, getUserByEmail } from "~/data/user";
 import { z } from "zod";
-import { Pool } from "@neondatabase/serverless";
 import { dbConfig } from "~/server/db/client";
-import { drizzle } from "drizzle-orm/neon-serverless";
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
 
 export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
   serverAuth$(() => ({
@@ -19,8 +19,8 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
     ] as Provider[],
     callbacks: {
       session: async ({ session, token }: { session: any; token: any }) => {
-        const pool = new Pool(dbConfig);
-        const db = drizzle(pool);
+        const sql = neon(dbConfig.url);
+        const db = drizzle(sql);
 
         if (session?.user) {
           session.user.id = token.sub;
@@ -35,7 +35,6 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
           }
         }
 
-        await pool.end();
         return session;
       },
       jwt: async ({ user, token }: { user?: any; token: any }) => {

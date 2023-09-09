@@ -13,7 +13,7 @@ import { getUserAndDb } from "./plugin@user";
 export const useCreateEmptyPreset = routeAction$(
   async ({ name }, { cookie, fail }) => {
     try {
-      const { user, pool, db } = await getUserAndDb(cookie);
+      const { user, db } = await getUserAndDb(cookie);
       if (!user) {
         return { success: false, error: "You must login to create preset" };
       }
@@ -26,7 +26,6 @@ export const useCreateEmptyPreset = routeAction$(
         repetitions: 3,
       });
 
-      await pool.end();
       return { success: true };
     } catch (e: any) {
       console.error(e);
@@ -42,7 +41,7 @@ export const useUpdatePreset = routeAction$(
     { cookie, fail },
   ) => {
     try {
-      const { user, pool, db } = await getUserAndDb(cookie);
+      const { user, db } = await getUserAndDb(cookie);
 
       if (!user) {
         return { success: false, error: "You must login to update preset" };
@@ -57,7 +56,6 @@ export const useUpdatePreset = routeAction$(
         ...(repetitions && { repetitions: parseInt(repetitions) }),
       });
 
-      await pool.end();
       return { success: true };
     } catch (e: any) {
       console.error(e);
@@ -75,7 +73,7 @@ export const useUpdatePreset = routeAction$(
 );
 
 export const useListPresets = routeLoader$(async ({ cookie }) => {
-  const { user, pool, db } = await getUserAndDb(cookie);
+  const { user, db } = await getUserAndDb(cookie);
 
   if (!user) {
     return { success: false, error: "You must login to list presets" };
@@ -83,7 +81,6 @@ export const useListPresets = routeLoader$(async ({ cookie }) => {
 
   const presets = await listUserPresets(db, user.id);
 
-  await pool.end();
   return {
     success: true,
     data: presets,
@@ -91,7 +88,7 @@ export const useListPresets = routeLoader$(async ({ cookie }) => {
 });
 
 export const useSelectedPreset = routeLoader$(async ({ cookie }) => {
-  const { user, pool, db } = await getUserAndDb(cookie);
+  const { user, db } = await getUserAndDb(cookie);
 
   if (!user) {
     return { success: false, error: "You must login to get preset" };
@@ -103,7 +100,6 @@ export const useSelectedPreset = routeLoader$(async ({ cookie }) => {
 
   const preset = await getPreset(db, user.selectedPresetId);
 
-  await pool.end();
   return {
     success: true,
     data: preset,
@@ -113,14 +109,12 @@ export const useSelectedPreset = routeLoader$(async ({ cookie }) => {
 export const useSelectPreset = routeAction$(
   async ({ id }, { cookie, fail }) => {
     try {
-      const { user, pool, db } = await getUserAndDb(cookie);
+      const { user, db } = await getUserAndDb(cookie);
 
       if (!user) {
         return { success: false, error: "You must login to select preset" };
       }
       await selectPreset(db, { userId: user.id, presetId: id });
-
-      await pool.end();
     } catch (e: any) {
       console.error(e);
       fail(500, e.message);
@@ -132,13 +126,12 @@ export const useSelectPreset = routeAction$(
 export const useDeletePreset = routeAction$(
   async ({ id }, { cookie, fail }) => {
     try {
-      const { user, pool, db } = await getUserAndDb(cookie);
+      const { user, db } = await getUserAndDb(cookie);
 
       if (!user) {
         return { success: false, error: "You must login to delete preset" };
       }
 
-      await pool.end();
       await deletePreset(db, id);
     } catch (e: any) {
       console.error(e);

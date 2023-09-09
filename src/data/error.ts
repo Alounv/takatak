@@ -1,9 +1,9 @@
+import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import type { NewError } from "~/server/db/schema";
 import { errorsTable } from "~/server/db/schema";
-import type { NeonDatabase } from "drizzle-orm/neon-serverless";
 
 export async function createError(
-  db: NeonDatabase,
+  db: NeonHttpDatabase,
   { userId, word, input, date }: NewError,
 ) {
   const inserted = await db

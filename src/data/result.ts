@@ -1,11 +1,10 @@
 import type { NewResult } from "~/server/db/schema";
 import { resultsTable } from "~/server/db/schema";
-import type { NeonDatabase } from "drizzle-orm/neon-serverless";
-import { and, eq, isNull } from "drizzle-orm/expressions";
-import { sql } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
+import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 
 export async function createResult(
-  db: NeonDatabase,
+  db: NeonHttpDatabase,
   { userId, word, duration, date }: NewResult,
 ) {
   const inserted = await db
@@ -17,7 +16,7 @@ export async function createResult(
 }
 
 export async function addErrorDate(
-  db: NeonDatabase,
+  db: NeonHttpDatabase,
   {
     userId,
     word,
@@ -44,7 +43,7 @@ export async function addErrorDate(
 }
 
 export async function getAnalyticsPerWord(
-  db: NeonDatabase,
+  db: NeonHttpDatabase,
   {
     userId,
     repetitions,
