@@ -86,7 +86,7 @@ export const Practice = component$(() => {
       </div>
 
       <div class="text-gray-500">
-        <span>Progress {Math.round(progress * 100)} %</span>
+        <span>Validated {Math.round(progress * 100)} %</span>
       </div>
 
       <Text
