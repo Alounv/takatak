@@ -9,6 +9,7 @@ import {
 } from "~/data/preset";
 import { routeLoader$ } from "@builder.io/qwik-city";
 import { getUserAndDb } from "./plugin@user";
+import { getAnalyticsPerWord } from "~/data/result";
 
 export const useCreateEmptyPreset = routeAction$(
   async ({ name }, { cookie, fail }) => {
@@ -87,7 +88,7 @@ export const useListPresets = routeLoader$(async ({ cookie }) => {
   };
 });
 
-export const useSelectedPreset = routeLoader$(async ({ cookie }) => {
+export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
   const { user, db } = await getUserAndDb(cookie);
 
   if (!user) {
@@ -100,9 +101,36 @@ export const useSelectedPreset = routeLoader$(async ({ cookie }) => {
 
   const preset = await getPreset(db, user.selectedPresetId);
 
+  const analytics = await getAnalyticsPerWord(db, {
+    userId: user.id,
+    repetitions: preset.repetitions,
+    currentWords: preset.text.split(" "),
+  });
+
+  const validatedWords = preset
+    ? analytics.filter((x) => x.speed >= preset.speed).map((x) => x.word)
+    : [];
+
+  const presetWords = (preset.text || "").split(" ");
+  const nonValidatedWords = presetWords.filter(
+    (x) => !validatedWords.includes(x),
+  );
+
+  const shuffled = nonValidatedWords.sort(() => Math.random() - 0.5);
+  const words = [" ", ...shuffled];
+
+  const progress = validatedWords.length / presetWords.length;
+
+  const nonValidatedAnalytics = analytics.filter((w) =>
+    nonValidatedWords.includes(w.word),
+  );
+
   return {
     success: true,
-    data: preset,
+    preset,
+    words,
+    progress,
+    nonValidatedAnalytics,
   };
 });
 

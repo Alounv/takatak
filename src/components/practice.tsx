@@ -8,39 +8,19 @@ import { Text } from "./text";
 import { InputArea } from "./input";
 import { getIsMatching } from "~/utils";
 import { useSaveData, useSaveError } from "~/routes/plugin@save";
-import { useSelectedPreset } from "~/routes/plugin@preset";
+import { usePresetAndTrainingWords } from "~/routes/plugin@preset";
 import { Analytics } from "./analytics";
-import { useValidatedWords } from "~/routes/plugin@analytics";
 
 export const Practice = component$(() => {
   const indexSignal = useSignal(0);
   const inputSignal = useSignal("");
   const startTime = useSignal(0);
   const lastErrorSignal = useSignal(-1);
-  const selectedPreset = useSelectedPreset();
-  const currentPreset = selectedPreset.value.data;
 
-  const analytics = useValidatedWords();
-  const measuredWords = analytics.value.data || [];
-  const validatedWords = currentPreset
-    ? measuredWords
-        .filter((x) => x.speed >= currentPreset?.speed)
-        .map((x) => x.word)
-    : [];
-
-  const presetWords = (currentPreset?.text || "").split(" ");
-  const nonValidatedWords = presetWords.filter(
-    (x) => !validatedWords.includes(x),
-  );
-
-  const words = useComputed$(() => {
-    const shuffled = nonValidatedWords.sort(() => Math.random() - 0.5);
-    return [" ", ...shuffled];
-  });
-
-  const currentWord = useComputed$(() => {
-    return words.value[indexSignal.value];
-  });
+  const {
+    value: { preset, words = [], nonValidatedAnalytics = [], progress = 0 },
+  } = usePresetAndTrainingWords();
+  const currentWord = useComputed$(() => words[indexSignal.value]);
 
   const saveResultAction = useSaveData();
   const saveErrorAction = useSaveError();
@@ -89,19 +69,27 @@ export const Practice = component$(() => {
     <div class="flex flex-col items-center gap-3">
       <div class="text-lg font-medium">Practice</div>
 
-      <div class="text-gray-500">{currentPreset?.name || "None"}</div>
+      <div class="text-gray-500">
+        <span>{preset?.name || "None"}</span>
+        <span class="mx-2">|</span>
+        <span>{preset?.speed || 0} WPM</span>
+        <span class="mx-2">|</span>
+        <span>{preset?.repetitions || 0} Repetitions</span>
+      </div>
+
+      <div class="text-gray-500">
+        <span>Progress {Math.round(progress * 100)} %</span>
+      </div>
 
       <Text
-        words={words.value}
+        words={words}
         currentIndex={indexSignal.value}
         hasError={lastErrorSignal.value === indexSignal.value}
       />
 
       <InputArea index={indexSignal.value} inputSignal={inputSignal} />
 
-      <Analytics
-        words={measuredWords.filter((w) => nonValidatedWords.includes(w.word))}
-      />
+      <Analytics words={nonValidatedAnalytics} />
     </div>
   );
 });
