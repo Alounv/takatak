@@ -1,11 +1,11 @@
 import type { NewPreset } from "~/server/db/schema";
 import { selectedPresetsTable } from "~/server/db/schema";
 import { presetsTable } from "~/server/db/schema";
-import type { NeonDatabase } from "drizzle-orm/neon-serverless";
-import { eq } from "drizzle-orm/expressions";
+import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
+import { eq } from "drizzle-orm";
 
 export const createPreset = async (
-  db: NeonDatabase,
+  db: NeonHttpDatabase,
   { userId, name, text, sessionLength, speed, repetitions }: NewPreset,
 ) => {
   const inserted = await db
@@ -17,7 +17,7 @@ export const createPreset = async (
 };
 
 export const updatePreset = async (
-  db: NeonDatabase,
+  db: NeonHttpDatabase,
   { id, ...partial }: Partial<NewPreset> & { id: string },
 ) => {
   const updated = await db
@@ -29,7 +29,7 @@ export const updatePreset = async (
   return updated[0];
 };
 
-export const getPreset = async (db: NeonDatabase, id: string) => {
+export const getPreset = async (db: NeonHttpDatabase, id: string) => {
   const preset = await db
     .select()
     .from(presetsTable)
@@ -38,7 +38,7 @@ export const getPreset = async (db: NeonDatabase, id: string) => {
   return preset[0];
 };
 
-export const listUserPresets = async (db: NeonDatabase, userId: string) => {
+export const listUserPresets = async (db: NeonHttpDatabase, userId: string) => {
   const presets = await db
     .select()
     .from(presetsTable)
@@ -48,7 +48,7 @@ export const listUserPresets = async (db: NeonDatabase, userId: string) => {
 };
 
 export const selectPreset = async (
-  db: NeonDatabase,
+  db: NeonHttpDatabase,
   {
     userId,
     presetId,
@@ -69,7 +69,7 @@ export const selectPreset = async (
   return updated[0];
 };
 
-export const deletePreset = async (db: NeonDatabase, id: string) => {
+export const deletePreset = async (db: NeonHttpDatabase, id: string) => {
   const deleted = await db
     .delete(presetsTable)
     .where(eq(presetsTable.id, id))

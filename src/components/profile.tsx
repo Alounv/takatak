@@ -35,6 +35,8 @@ export const Profile = component$(({ user }: { user: User }) => {
           >
             <span class="sr-only">Open user menu</span>
             <img
+              width="16"
+              height="16"
               class="h-8 w-8 rounded-full"
               src={user.avatar_url || undefined}
               alt=""

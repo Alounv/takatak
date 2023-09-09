@@ -1,13 +1,16 @@
 import { decode } from "@auth/core/jwt";
 import type { Cookie } from "@builder.io/qwik-city";
 import { z } from "zod";
-import { eq } from "drizzle-orm/expressions";
 import type { NewUser, User } from "~/server/db/schema";
 import { selectedPresetsTable } from "~/server/db/schema";
 import { usersTable } from "~/server/db/schema";
-import type { NeonDatabase } from "drizzle-orm/neon-serverless";
+import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
+import { eq } from "drizzle-orm";
 
-export async function getUserByEmail(db: NeonDatabase, email: User["email"]) {
+export async function getUserByEmail(
+  db: NeonHttpDatabase,
+  email: User["email"],
+) {
   const found = await db
     .select()
     .from(usersTable)
@@ -24,7 +27,7 @@ export async function getUserByEmail(db: NeonDatabase, email: User["email"]) {
 }
 
 export async function createUser(
-  db: NeonDatabase,
+  db: NeonHttpDatabase,
   { email, name, avatar_url }: NewUser,
 ) {
   const inserted = await db
@@ -37,7 +40,10 @@ export async function createUser(
 
 const secret = z.string().parse(import.meta.env.VITE_NEXTAUTH_SECRET);
 
-export const getUserFromCookie = async (db: NeonDatabase, cookie: Cookie) => {
+export const getUserFromCookie = async (
+  db: NeonHttpDatabase,
+  cookie: Cookie,
+) => {
   const sessionToken =
     cookie.get("next-auth.session-token") ||
     cookie.get("__Secure-next-auth.session-token");

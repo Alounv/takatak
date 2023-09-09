@@ -4,7 +4,7 @@ import { getAnalyticsPerWord } from "~/data/result";
 import { getPreset } from "~/data/preset";
 
 export const useValidatedWords = routeLoader$(async ({ cookie }) => {
-  const { user, pool, db } = await getUserAndDb(cookie);
+  const { user, db } = await getUserAndDb(cookie);
   if (!user) return { success: false, error: "You must login" };
 
   if (!user.selectedPresetId)
@@ -18,6 +18,5 @@ export const useValidatedWords = routeLoader$(async ({ cookie }) => {
     currentWords: preset.text.split(" "),
   });
 
-  await pool.end();
   return { success: true, data: analytics };
 });
