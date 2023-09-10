@@ -87,7 +87,7 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
           <input type="text" name="name" value={preset.name} />
           <input
             type="number"
-            name="sessionLenght"
+            name="sessionLength"
             value={preset.sessionLength}
           />
           <input type="number" name="speed" value={preset.speed} />

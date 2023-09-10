@@ -70,5 +70,8 @@ export async function getAnalyticsPerWord(
     })
     .sort((a, b) => b.speed - a.speed);
 
-  return filteredResults;
+  return {
+    analytics: filteredResults,
+    practicedWordsCount: results.length,
+  };
 }
