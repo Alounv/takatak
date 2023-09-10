@@ -116,8 +116,14 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
     (x) => !validatedWords.includes(x),
   );
 
-  const shuffled = nonValidatedWords.sort(() => Math.random() - 0.5);
-  const words = [" ", ...shuffled];
+  const factor = Math.min(5, preset.sessionLength / nonValidatedWords.length);
+
+  const practiceWords = new Array(Math.ceil(factor))
+    .fill(nonValidatedWords)
+    .flat()
+    .sort(() => Math.random() - 0.5);
+
+  const words = [" ", ...practiceWords.slice(0, preset.sessionLength - 1)];
 
   const progress = validatedWords.length / presetWords.length;
 
