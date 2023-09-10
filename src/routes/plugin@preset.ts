@@ -10,6 +10,7 @@ import {
 import { routeLoader$ } from "@builder.io/qwik-city";
 import { getUserAndDb } from "./plugin@user";
 import { getAnalyticsPerWord } from "~/data/result";
+import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 
 export const useCreateEmptyPreset = routeAction$(
   async ({ name }, { cookie, fail }) => {
@@ -88,31 +89,73 @@ export const useListPresets = routeLoader$(async ({ cookie }) => {
   };
 });
 
-export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
-  const { user, db } = await getUserAndDb(cookie);
-
-  if (!user) {
-    return { success: false, error: "You must login to get preset" };
-  }
-
-  if (!user.selectedPresetId) {
-    return { success: true, error: "No preset selected" };
-  }
-
-  const preset = await getPreset(db, user.selectedPresetId);
+const getAnalyticsForPreset = async (
+  db: NeonHttpDatabase,
+  {
+    presetId,
+    userId,
+    cutoffDate,
+  }: {
+    presetId: string;
+    userId: string;
+    cutoffDate?: Date;
+  },
+) => {
+  const preset = await getPreset(db, presetId);
 
   const { analytics, wordsRepartition } = await getAnalyticsPerWord(db, {
-    userId: user.id,
+    userId: userId,
     repetitions: preset.repetitions,
     currentWords: preset.text.split(" "),
     targetSpeed: preset.speed,
+    cutoffDate,
   });
+
+  const presetWords = (preset.text || "").split(" ");
+
+  return {
+    preset,
+    analytics,
+    presetWords,
+    wordsRepartition: {
+      ...wordsRepartition,
+      total: presetWords.length,
+      remaining: presetWords.length - wordsRepartition.total,
+    },
+  };
+};
+
+export const useAnalyticsForYesterday = routeLoader$(async ({ cookie }) => {
+  const { user, db } = await getUserAndDb(cookie);
+  if (!user) return { success: false, error: "You must login to get preset" };
+  if (!user.selectedPresetId)
+    return { success: false, error: "No preset selected" };
+
+  const { wordsRepartition } = await getAnalyticsForPreset(db, {
+    presetId: user.selectedPresetId,
+    userId: user.id,
+    cutoffDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
+  });
+
+  return { success: true, wordsRepartition };
+});
+
+export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
+  const { user, db } = await getUserAndDb(cookie);
+  if (!user) return { success: false, error: "You must login to get preset" };
+  if (!user.selectedPresetId)
+    return { success: false, error: "No preset selected" };
+
+  const { wordsRepartition, analytics, preset, presetWords } =
+    await getAnalyticsForPreset(db, {
+      presetId: user.selectedPresetId,
+      userId: user.id,
+    });
 
   const validatedWords = preset
     ? analytics.filter((x) => x.speed >= preset.speed).map((x) => x.word)
     : [];
 
-  const presetWords = (preset.text || "").split(" ");
   const nonValidatedWords = presetWords.filter(
     (x) => !validatedWords.includes(x),
   );
@@ -126,20 +169,11 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
 
   const words = [" ", ...practiceWords.slice(0, preset.sessionLength - 1)];
 
-  const nonValidatedAnalytics = analytics.filter((w) =>
-    nonValidatedWords.includes(w.word),
-  );
-
   return {
     success: true,
     preset,
     words,
-    nonValidatedAnalytics,
-    wordsRepartition: {
-      ...wordsRepartition,
-      total: presetWords.length,
-      remaining: presetWords.length - wordsRepartition.total,
-    },
+    wordsRepartition,
   };
 });
 
