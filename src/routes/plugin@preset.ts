@@ -101,10 +101,11 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
 
   const preset = await getPreset(db, user.selectedPresetId);
 
-  const { analytics, practicedWordsCount } = await getAnalyticsPerWord(db, {
+  const { analytics, wordsRepartition } = await getAnalyticsPerWord(db, {
     userId: user.id,
     repetitions: preset.repetitions,
     currentWords: preset.text.split(" "),
+    targetSpeed: preset.speed,
   });
 
   const validatedWords = preset
@@ -133,10 +134,9 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
     success: true,
     preset,
     words,
-    validatedCount: validatedWords.length,
-    practicedCount: practicedWordsCount,
     totalCount: presetWords.length,
     nonValidatedAnalytics,
+    wordsRepartition,
   };
 });
 

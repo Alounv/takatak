@@ -23,8 +23,7 @@ export const Practice = component$(() => {
       preset,
       words = [],
       nonValidatedAnalytics = [],
-      validatedCount,
-      practicedCount,
+      wordsRepartition,
       totalCount,
     },
   } = usePresetAndTrainingWords();
@@ -93,11 +92,16 @@ export const Practice = component$(() => {
       </div>
 
       <div class="text-gray-500">
-        <span>Validated: {validatedCount}</span>
-        <span class="mx-2">|</span>
-        <span>Practiced: {practicedCount}</span>
-        <span class="mx-2">|</span>
-        <span>Total: {totalCount}</span>
+        {Object.entries({ ...wordsRepartition, total: totalCount }).map(
+          ([k, v]) => {
+            return (
+              <div key={k} class="flex gap-2">
+                <strong>{k}: </strong>
+                <span>{v}</span>
+              </div>
+            );
+          },
+        )}
       </div>
 
       <Text
