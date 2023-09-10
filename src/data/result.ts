@@ -1,6 +1,6 @@
 import type { NewResult } from "~/server/db/schema";
 import { resultsTable } from "~/server/db/schema";
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, lte, sql } from "drizzle-orm";
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 
 export async function createResult(
@@ -22,11 +22,13 @@ export async function getAnalyticsPerWord(
     repetitions,
     currentWords,
     targetSpeed,
+    cutoffDate,
   }: {
     userId: string;
     repetitions: number;
     currentWords: string[];
     targetSpeed: number;
+    cutoffDate?: Date;
   },
 ) {
   const sq = db
@@ -37,6 +39,7 @@ export async function getAnalyticsPerWord(
       and(
         eq(resultsTable.userId, userId),
         inArray(resultsTable.word, currentWords),
+        cutoffDate ? lte(resultsTable.date, cutoffDate) : undefined,
       ),
     )
     .as("sq");
@@ -82,7 +85,8 @@ export async function getAnalyticsPerWord(
     analytics,
     wordsRepartition: {
       ...wordsRepartition,
-      [repetitions]: wordsRepartition[repetitions] - wordsRepartition.validated,
+      [repetitions]:
+        (wordsRepartition[repetitions] || 0) - wordsRepartition.validated,
     },
   };
 }

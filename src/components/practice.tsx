@@ -8,8 +8,10 @@ import { Text } from "./text";
 import { InputArea } from "./input";
 import { getIsMatching } from "~/utils";
 import { useSaveData, useSaveError } from "~/routes/plugin@save";
-import { usePresetAndTrainingWords } from "~/routes/plugin@preset";
-import { Analytics } from "./analytics";
+import {
+  useAnalyticsForYesterday,
+  usePresetAndTrainingWords,
+} from "~/routes/plugin@preset";
 
 export const Practice = component$(() => {
   const indexSignal = useSignal(0);
@@ -19,8 +21,12 @@ export const Practice = component$(() => {
   const cachedWords = useSignal<string[]>([]);
 
   const {
-    value: { preset, words = [], nonValidatedAnalytics = [], wordsRepartition },
+    value: { preset, words = [], wordsRepartition },
   } = usePresetAndTrainingWords();
+
+  const {
+    value: { wordsRepartition: yesterdayWordsRepartition },
+  } = useAnalyticsForYesterday();
 
   useVisibleTask$(() => {
     cachedWords.value = words;
@@ -73,58 +79,48 @@ export const Practice = component$(() => {
     }
   });
 
-  const categories = Object.entries(wordsRepartition || {})
-    .filter(([k]) => k !== "total")
-    .map(([k, v]) => {
-      let color = `bg-sky-${parseInt(k) * 2}00`;
-      if (k === "validated") color = "bg-blue-500";
-      if (k === "remaining") color = "bg-gray-300";
-
-      const percent = ((v / (wordsRepartition?.total || 1)) * 100).toFixed(0);
-      return { key: k, count: v, color, percent };
-    });
+  const categories = getCategories(wordsRepartition);
 
   return (
-    <div class="flex flex-col items-center gap-3">
-      <div class="text-lg font-medium">Practice</div>
-
-      <div class="text-gray-500">
-        <span>{preset?.name || "None"}</span>
-        <span class="mx-2">|</span>
-        <span>{preset?.speed || 0} WPM</span>
-        <span class="mx-2">|</span>
-        <span>{preset?.repetitions || 0} Repetitions</span>
+    <div class="flex flex-col gap-8">
+      <div class="flex items-center gap-4">
+        <div class="text-lg font-medium">Practice</div>
+        <div class="text-gray-500">
+          <span>{preset?.name || "None"}</span>
+          <span class="mx-2">|</span>
+          <span>{preset?.speed || 0} WPM</span>
+          <span class="mx-2">|</span>
+          <span>{preset?.repetitions || 0} Repetitions</span>
+        </div>
       </div>
 
-      <div class="flex w-full my-4">
-        {categories.map(({ key, color, percent, count }, i) => {
-          return (
-            <div
-              key={key}
-              class={`flex flex-col border-white border rounded ${color}`}
-              style={{ width: `${percent}%` }}
-              title={`${key}: ${count}`}
-            >
-              <span
-                class={`text-xs pl-1 ${
-                  i % 2 === 0 ? "translate-y-4" : "-translate-y-4"
-                }`}
-              >
-                {count}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-      <div class="text-gray-500 flex w-full gap-1">
-        {categories.map(({ key, color }) => {
-          return (
-            <div key={key} class="flex gap-1">
-              <div class={`h-4 w-4 ${color} rounded`} />
-              <div class="text-xs font-bold">{key}</div>
-            </div>
-          );
-        })}
+      <div>
+        {yesterdayWordsRepartition && (
+          <Analytics
+            repartition={yesterdayWordsRepartition}
+            title={`Yesterday`}
+          />
+        )}
+        {wordsRepartition && (
+          <Analytics repartition={wordsRepartition} title={`Today`} />
+        )}
+        <div class="mt-3 flex flex-col gap-3">
+          <div class="text-sm font-medium">Today's progress</div>
+          <div class="text-gray-500 flex flex-col gap-1">
+            {categories.map(({ key, color, count }) => {
+              const yesterdayCount =
+                (yesterdayWordsRepartition?.[key] as number) || 0;
+              const diff = count - yesterdayCount;
+              return (
+                <div key={key} class="flex gap-1">
+                  <div class={`h-4 w-4 ${color} rounded`} />
+                  <div class="text-xs font-bold w-20">{key}</div>
+                  <div class="text-xs text-gray-400">{diff}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       <Text
@@ -134,8 +130,6 @@ export const Practice = component$(() => {
       />
 
       <InputArea index={indexSignal.value} inputSignal={inputSignal} />
-
-      <Analytics words={nonValidatedAnalytics} />
     </div>
   );
 });
@@ -150,4 +144,65 @@ export const Practice = component$(() => {
 // bg-sk-800
 // bg-sk-900
 //
-// bg-gray-400
+interface Repartition extends Record<string, number> {
+  total: number;
+  validated: number;
+  remaining: number;
+}
+
+const Analytics = ({
+  title,
+  repartition,
+}: {
+  repartition: Repartition;
+  title: string;
+}) => {
+  const categories = getCategories(repartition);
+  return (
+    <div class="flex items-center gap-4">
+      <div class="text-sm w-20 font-medium">{title}</div>
+      <div class="flex w-full my-3">
+        {categories.map(({ key, color, percent, count }, i) => {
+          return (
+            <div
+              key={key}
+              class={`flex flex-col border-white border rounded ${color}`}
+              style={{ width: `${percent}%` }}
+              title={`${key}: ${count}`}
+            >
+              {count > 0 && (
+                <span
+                  class={`text-xs pl-1 ${
+                    i % 2 === 0 ? "translate-y-4" : "-translate-y-4"
+                  }`}
+                >
+                  {count}
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+const getCategoryColor = (k: string) => {
+  if (k === "validated") return "bg-blue-500";
+  if (k === "remaining") return "bg-gray-300";
+
+  const parsed = parseInt(k);
+  if (parsed >= 0) return `bg-sky-${parsed * 2}00`;
+};
+
+const getCategories = (repartition: Repartition | undefined) => {
+  if (!repartition) return [];
+
+  return Object.entries(repartition || {})
+    .filter(([k]) => k !== "total")
+    .map(([k, v]) => {
+      const color = getCategoryColor(k);
+      const percent = ((v / (repartition?.total || 1)) * 100).toFixed(0);
+      return { key: k, count: v, color, percent };
+    });
+};
