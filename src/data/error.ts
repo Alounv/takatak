@@ -4,11 +4,11 @@ import { errorsTable } from "~/server/db/schema";
 
 export async function createError(
   db: NeonHttpDatabase,
-  { userId, word, input, date }: NewError,
+  { userId, word, input }: NewError,
 ) {
   const inserted = await db
     .insert(errorsTable)
-    .values({ userId, word, input, date })
+    .values({ userId, word, input })
     .returning();
 
   return inserted[0];

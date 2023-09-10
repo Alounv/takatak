@@ -1,4 +1,4 @@
-import { pgTable, text, uuid, integer, date } from "drizzle-orm/pg-core";
+import { pgTable, timestamp, text, uuid, integer } from "drizzle-orm/pg-core";
 import type { InferModel } from "drizzle-orm";
 
 // --- USER ---
@@ -20,8 +20,7 @@ export const resultsTable  = pgTable("results", {
   userId: uuid("user_id").references(() => usersTable.id).notNull(),
   word: text("word").notNull(),
   duration: integer("duration").notNull(),
-  date: date("date").notNull(),
-  errorDate: date("error_date"),
+  date: timestamp("timestamp").defaultNow(),
 });
 
 export type Result = InferModel<typeof resultsTable>;
@@ -34,7 +33,7 @@ export const errorsTable = pgTable("errors", {
   userId: uuid("user_id").references(() => usersTable.id).notNull(),
   word: text("word").notNull(),
   input: text("input").notNull(),
-  date: date("date").notNull(),
+  date: timestamp("timestamp").defaultNow(),
 });
 
 export type Error = InferModel<typeof errorsTable>;

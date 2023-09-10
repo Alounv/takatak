@@ -1,6 +1,6 @@
 import { routeAction$, z, zod$ } from "@builder.io/qwik-city";
 import { createError } from "~/data/error";
-import { addErrorDate, createResult } from "~/data/result";
+import { createResult } from "~/data/result";
 import { getUserAndDb } from "./plugin@user";
 
 export const useSaveData = routeAction$(
@@ -15,12 +15,10 @@ export const useSaveData = routeAction$(
         };
       }
 
-      const date = new Date().toISOString();
       await createResult(db, {
         userId: user.id,
         word,
         duration,
-        date,
       });
 
       return { success: true };
@@ -44,17 +42,10 @@ export const useSaveError = routeAction$(
         };
       }
 
-      const date = new Date().toISOString();
       await createError(db, {
         userId: user.id,
         word,
         input,
-        date,
-      });
-      await addErrorDate(db, {
-        userId: user.id,
-        word,
-        errorDate: date,
       });
 
       return { success: true };
