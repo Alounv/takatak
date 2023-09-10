@@ -134,9 +134,12 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
     success: true,
     preset,
     words,
-    totalCount: presetWords.length,
     nonValidatedAnalytics,
-    wordsRepartition,
+    wordsRepartition: {
+      ...wordsRepartition,
+      total: presetWords.length,
+      remaining: presetWords.length - wordsRepartition.total,
+    },
   };
 });
 
