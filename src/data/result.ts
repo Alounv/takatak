@@ -60,8 +60,10 @@ export async function getAnalyticsPerWord(
     .where(and(eq(resultsTable.userId, userId), isNull(resultsTable.errorDate)))
     .groupBy(resultsTable.word);
 
-  const filteredResults = results
-    .filter((r) => r.count >= repetitions && currentWords.includes(r.word))
+  const filteredResults = results.filter((r) => currentWords.includes(r.word));
+
+  const analytics = filteredResults
+    .filter((r) => r.count >= repetitions)
     .map((r) => {
       return {
         word: r.word,
@@ -71,7 +73,7 @@ export async function getAnalyticsPerWord(
     .sort((a, b) => b.speed - a.speed);
 
   return {
-    analytics: filteredResults,
-    practicedWordsCount: results.length,
+    analytics,
+    practicedWordsCount: filteredResults.length,
   };
 }
