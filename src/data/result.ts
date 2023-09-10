@@ -54,8 +54,10 @@ export async function getAnalyticsPerWord(
 
   const wordsRepartition: Record<string, number> & {
     validated: number;
+    total: number;
   } = {
     validated: 0,
+    total: results.length,
   };
 
   const analytics = results
@@ -78,6 +80,9 @@ export async function getAnalyticsPerWord(
 
   return {
     analytics,
-    wordsRepartition,
+    wordsRepartition: {
+      ...wordsRepartition,
+      [repetitions]: wordsRepartition[repetitions] - wordsRepartition.validated,
+    },
   };
 }

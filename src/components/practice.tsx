@@ -19,13 +19,7 @@ export const Practice = component$(() => {
   const cachedWords = useSignal<string[]>([]);
 
   const {
-    value: {
-      preset,
-      words = [],
-      nonValidatedAnalytics = [],
-      wordsRepartition,
-      totalCount,
-    },
+    value: { preset, words = [], nonValidatedAnalytics = [], wordsRepartition },
   } = usePresetAndTrainingWords();
 
   useVisibleTask$(() => {
@@ -91,17 +85,25 @@ export const Practice = component$(() => {
         <span>{preset?.repetitions || 0} Repetitions</span>
       </div>
 
-      <div class="text-gray-500">
-        {Object.entries({ ...wordsRepartition, total: totalCount }).map(
-          ([k, v]) => {
+      <div class="text-gray-500 flex w-full">
+        {Object.entries(wordsRepartition || {})
+          .filter(([k]) => k !== "total")
+          .map(([k, v]) => {
+            const percent = (
+              (v / (wordsRepartition?.total || 1)) *
+              100
+            ).toFixed(0);
             return (
-              <div key={k} class="flex gap-2">
-                <strong>{k}: </strong>
+              <div
+                key={k}
+                class={`flex flex-col border-black border bg-white`}
+                style={{ width: `${percent}%` }}
+              >
+                <strong>{k}</strong>
                 <span>{v}</span>
               </div>
             );
-          },
-        )}
+          })}
       </div>
 
       <Text
