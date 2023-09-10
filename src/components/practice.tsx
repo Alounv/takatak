@@ -19,7 +19,14 @@ export const Practice = component$(() => {
   const cachedWords = useSignal<string[]>([]);
 
   const {
-    value: { preset, words = [], nonValidatedAnalytics = [], progress = 0 },
+    value: {
+      preset,
+      words = [],
+      nonValidatedAnalytics = [],
+      validatedCount,
+      practicedCount,
+      totalCount,
+    },
   } = usePresetAndTrainingWords();
 
   useVisibleTask$(() => {
@@ -86,7 +93,11 @@ export const Practice = component$(() => {
       </div>
 
       <div class="text-gray-500">
-        <span>Validated {Math.round(progress * 100)} %</span>
+        <span>Validated: {validatedCount}</span>
+        <span class="mx-2">|</span>
+        <span>Practiced: {practicedCount}</span>
+        <span class="mx-2">|</span>
+        <span>Total: {totalCount}</span>
       </div>
 
       <Text
