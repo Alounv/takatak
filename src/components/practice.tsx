@@ -73,6 +73,17 @@ export const Practice = component$(() => {
     }
   });
 
+  const categories = Object.entries(wordsRepartition || {})
+    .filter(([k]) => k !== "total")
+    .map(([k, v]) => {
+      let color = `bg-sky-${parseInt(k) * 2}00`;
+      if (k === "validated") color = "bg-blue-500";
+      if (k === "remaining") color = "bg-gray-300";
+
+      const percent = ((v / (wordsRepartition?.total || 1)) * 100).toFixed(0);
+      return { key: k, count: v, color, percent };
+    });
+
   return (
     <div class="flex flex-col items-center gap-3">
       <div class="text-lg font-medium">Practice</div>
@@ -85,25 +96,35 @@ export const Practice = component$(() => {
         <span>{preset?.repetitions || 0} Repetitions</span>
       </div>
 
-      <div class="text-gray-500 flex w-full">
-        {Object.entries(wordsRepartition || {})
-          .filter(([k]) => k !== "total")
-          .map(([k, v]) => {
-            const percent = (
-              (v / (wordsRepartition?.total || 1)) *
-              100
-            ).toFixed(0);
-            return (
-              <div
-                key={k}
-                class={`flex flex-col border-black border bg-white`}
-                style={{ width: `${percent}%` }}
+      <div class="flex w-full my-4">
+        {categories.map(({ key, color, percent, count }, i) => {
+          return (
+            <div
+              key={key}
+              class={`flex flex-col border-white border rounded ${color}`}
+              style={{ width: `${percent}%` }}
+              title={`${key}: ${count}`}
+            >
+              <span
+                class={`text-xs pl-1 ${
+                  i % 2 === 0 ? "translate-y-4" : "-translate-y-4"
+                }`}
               >
-                <strong>{k}</strong>
-                <span>{v}</span>
-              </div>
-            );
-          })}
+                {count}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      <div class="text-gray-500 flex w-full gap-1">
+        {categories.map(({ key, color }) => {
+          return (
+            <div key={key} class="flex gap-1">
+              <div class={`h-4 w-4 ${color} rounded`} />
+              <div class="text-xs font-bold">{key}</div>
+            </div>
+          );
+        })}
       </div>
 
       <Text
@@ -118,3 +139,15 @@ export const Practice = component$(() => {
     </div>
   );
 });
+
+// bg-sk-100
+// bg-sk-200
+// bg-sk-300
+// bg-sk-400
+// bg-sk-500
+// bg-sk-600
+// bg-sk-700
+// bg-sk-800
+// bg-sk-900
+//
+// bg-gray-400
