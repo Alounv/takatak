@@ -16,11 +16,19 @@ export const Practice = component$(() => {
   const inputSignal = useSignal("");
   const startTime = useSignal(0);
   const lastErrorSignal = useSignal(-1);
+  const cachedWords = useSignal<string[]>([]);
 
   const {
     value: { preset, words = [], nonValidatedAnalytics = [], progress = 0 },
   } = usePresetAndTrainingWords();
-  const currentWord = useComputed$(() => words[indexSignal.value]);
+
+  useVisibleTask$(() => {
+    cachedWords.value = words;
+  });
+
+  const currentWord = useComputed$(
+    () => cachedWords.value?.[indexSignal.value],
+  );
 
   const saveResultAction = useSaveData();
   const saveErrorAction = useSaveError();
@@ -82,7 +90,7 @@ export const Practice = component$(() => {
       </div>
 
       <Text
-        words={words}
+        words={cachedWords.value}
         currentIndex={indexSignal.value}
         hasError={lastErrorSignal.value === indexSignal.value}
       />
