@@ -21,7 +21,13 @@ export async function getAnalyticsPerWord(
     userId,
     repetitions,
     currentWords,
-  }: { userId: string; repetitions: number; currentWords: string[] },
+    targetSpeed,
+  }: {
+    userId: string;
+    repetitions: number;
+    currentWords: string[];
+    targetSpeed: number;
+  },
 ) {
   const sq = db
     .select()
@@ -46,21 +52,32 @@ export async function getAnalyticsPerWord(
     .from(sq)
     .groupBy(sq.word);
 
-  const filteredResults = results.filter((r) => currentWords.includes(r.word));
+  const wordsRepartition: Record<string, number> & {
+    validated: number;
+  } = {
+    validated: 0,
+  };
 
-  const analytics = filteredResults
-    .filter((r) => r.count >= repetitions)
+  const analytics = results
+    .filter((r) => {
+      const count = Math.min(r.count, repetitions);
+      wordsRepartition[count] ??= 0;
+      wordsRepartition[count] += 1;
+      return r.count >= repetitions;
+    })
     .map((r) => {
       const maxDuration = Math.max(...r.lastDurations);
-      return {
-        word: r.word,
-        speed: (((r.word.length + 1) / (maxDuration / 1000)) * 60) / 5,
-      };
+      const speed = (((r.word.length + 1) / (maxDuration / 1000)) * 60) / 5;
+      if (speed >= targetSpeed) {
+        wordsRepartition["validated"] ??= 0;
+        wordsRepartition["validated"] += 1;
+      }
+      return { word: r.word, speed };
     })
     .sort((a, b) => b.speed - a.speed);
 
   return {
     analytics,
-    practicedWordsCount: filteredResults.length,
+    wordsRepartition,
   };
 }
