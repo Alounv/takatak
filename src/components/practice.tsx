@@ -98,14 +98,14 @@ export const Practice = component$(() => {
         {yesterdayWordsRepartition && (
           <Analytics
             repartition={yesterdayWordsRepartition}
-            title={`Yesterday`}
+            title={`24 h ago`}
           />
         )}
         {wordsRepartition && (
-          <Analytics repartition={wordsRepartition} title={`Today`} />
+          <Analytics repartition={wordsRepartition} title={`Current`} />
         )}
         <div class="mt-3 flex flex-col gap-3">
-          <div class="text-sm font-medium">Today's progress</div>
+          <div class="text-sm font-medium">Progress since 24 h</div>
           <div class="text-gray-500 flex flex-col gap-1">
             {yesterdayWordsRepartition &&
               categories
@@ -121,8 +121,10 @@ export const Practice = component$(() => {
                   ).toFixed(0);
                   return (
                     <div key={key} class="flex gap-3">
-                      <div class="text-xs font-bold w-20 text-right">
-                        ({key})
+                      <div class="text-xs w-24 text-right">
+                        {key === "validated"
+                          ? "✅ validated"
+                          : `types ${key} times`}
                       </div>
                       <div
                         class={`h-4 w-4 ${color} rounded`}
