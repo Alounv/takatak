@@ -26,7 +26,7 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
           session.user.id = token.sub;
           const { email, name, image } = session.user;
           const user = await getUserByEmail(db, email);
-          if (!user) {
+          if (!user.id) {
             await createUser(db, {
               email,
               name,
