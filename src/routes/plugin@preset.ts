@@ -102,16 +102,15 @@ const getAnalyticsForPreset = async (
   },
 ) => {
   const preset = await getPreset(db, presetId);
+  const presetWords = [...new Set((preset.text || "").split(" "))];
 
   const { analytics, wordsRepartition } = await getAnalyticsPerWord(db, {
     userId: userId,
     repetitions: preset.repetitions,
-    currentWords: preset.text.split(" "),
+    currentWords: presetWords,
     targetSpeed: preset.speed,
     cutoffDate,
   });
-
-  const presetWords = (preset.text || "").split(" ");
 
   return {
     preset,
@@ -158,6 +157,13 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
 
   const nonValidatedWords = presetWords.filter(
     (x) => !validatedWords.includes(x),
+  );
+
+  console.log(
+    presetWords.length,
+    analytics.length,
+    validatedWords.length,
+    nonValidatedWords.length,
   );
 
   const factor = Math.min(5, preset.sessionLength / nonValidatedWords.length);
