@@ -22,9 +22,11 @@ export async function getUserByEmail(
 
   if (!found.length || !found[0]) return null;
 
+  console.log("found", found);
+
   return {
-    ...found[0].users,
-    selectedPresetId: found[0].selected_presets?.presetId,
+    ...found[0]?.users,
+    selectedPresetId: found[0]?.selected_presets?.presetId,
   };
 }
 
