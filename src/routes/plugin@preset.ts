@@ -23,7 +23,7 @@ export const useCreateEmptyPreset = routeAction$(
         userId: user.id,
         name,
         text: "",
-        sessionLength: 100,
+        sessionLength: 50,
         speed: 30,
         repetitions: 3,
       });
@@ -157,13 +157,6 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
 
   const nonValidatedWords = presetWords.filter(
     (x) => !validatedWords.includes(x),
-  );
-
-  console.log(
-    presetWords.length,
-    analytics.length,
-    validatedWords.length,
-    nonValidatedWords.length,
   );
 
   const factor = Math.min(5, preset.sessionLength / nonValidatedWords.length);
