@@ -19,25 +19,19 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
     ] as Provider[],
     callbacks: {
       session: async ({ session, token }: { session: any; token: any }) => {
-        console.log("session", session);
         const sql = neon(dbConfig.url);
         const db = drizzle(sql);
 
-        console.log("user", session?.user);
         if (session?.user) {
           session.user.id = token.sub;
           const { email, name, image } = session.user;
-          console.log({ email, name, image });
           const user = await getUserByEmail(db, email);
-          console.log("user", user);
-          if (!user.id) {
-            console.log("creating user");
+          if (!user) {
             await createUser(db, {
               email,
               name,
               avatar_url: image,
             });
-            console.log("created user");
           }
         }
 
