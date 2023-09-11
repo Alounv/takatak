@@ -12,6 +12,13 @@ import { getUserAndDb } from "./plugin@user";
 import { getAnalyticsPerWord } from "~/data/result";
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 
+export const defaultPreset = {
+  text: "",
+  sessionLength: 50,
+  speed: 30,
+  repetitions: 3,
+};
+
 export const useCreateEmptyPreset = routeAction$(
   async ({ name }, { cookie, fail }) => {
     try {
@@ -22,10 +29,7 @@ export const useCreateEmptyPreset = routeAction$(
       await createPreset(db, {
         userId: user.id,
         name,
-        text: "",
-        sessionLength: 50,
-        speed: 30,
-        repetitions: 3,
+        ...defaultPreset,
       });
 
       return { success: true };
