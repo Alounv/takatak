@@ -35,6 +35,8 @@ export async function createUser(
     .values({ email, name, avatar_url })
     .returning();
 
+  console.log("inserted", inserted);
+
   return inserted[0];
 }
 
