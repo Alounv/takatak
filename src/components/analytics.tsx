@@ -99,7 +99,7 @@ const Categories = ({
                   <div class="text-xs w-24 text-right">
                     {key === "validated"
                       ? "✅ validated"
-                      : `types ${key} times`}
+                      : `typed ${key} times`}
                   </div>
                   <div
                     class={`h-4 w-4 ${color} rounded`}
