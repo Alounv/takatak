@@ -20,6 +20,9 @@ export async function getUserByEmail(
       eq(selectedPresetsTable.userId, usersTable.id),
     );
 
+  if (!found.length) return null;
+  if (!found[0]) return null;
+
   return {
     ...found[0].users,
     selectedPresetId: found[0].selected_presets?.presetId,
