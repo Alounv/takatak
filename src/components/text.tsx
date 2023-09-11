@@ -1,8 +1,8 @@
 const CLS = {
   past: "text-gray-200",
-  current: "text-blue-600",
+  current: "text-sky-600",
   error: "text-red-500",
-  future: "text-gray-500",
+  future: "text-black",
 };
 
 const getClass = (index: number, currentIndex: number, hasError: boolean) => {
@@ -37,9 +37,9 @@ export const Text = ({
   hasError: boolean;
 }) => {
   return (
-    <div class="flex flex-col items-center gap-1">
-      <div>
-        {words.map((word, i) => (
+    <div class="flex  flex-wrap items-center gap-2 text-lg tracking-wide font-medium">
+      {words.map((word, i) =>
+        word === " " ? null : (
           <Word
             key={i}
             index={i}
@@ -47,8 +47,8 @@ export const Text = ({
             hasError={hasError}
             word={word}
           />
-        ))}
-      </div>
+        ),
+      )}
     </div>
   );
 };

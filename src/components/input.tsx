@@ -1,4 +1,5 @@
 import type { Signal } from "@builder.io/qwik";
+import { Input } from "~/design/input";
 
 export const InputArea = ({
   index,
@@ -9,12 +10,13 @@ export const InputArea = ({
 }) => {
   return (
     <div class="flex gap-2">
+      <Input id="typing-area" type="text" signal={inputSignal} autoFocus />
+
       {index === 0 && (
-        <div class="bg-sky-500 text-white py-1 px-4 rounded flex items-center">
+        <div class="text-red-500 py-1 px-4 rounded flex items-center font-bold">
           {`press space twice to start`}
         </div>
       )}
-      <input type="text" bind:value={inputSignal} autoFocus />
     </div>
   );
 };
