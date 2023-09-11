@@ -14,7 +14,7 @@ export const InputArea = ({
           {`press space twice to start`}
         </div>
       )}
-      <input type="text" bind:value={inputSignal} />
+      <input type="text" bind:value={inputSignal} autoFocus />
     </div>
   );
 };
