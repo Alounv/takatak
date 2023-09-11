@@ -20,7 +20,7 @@ export async function getUserByEmail(
       eq(selectedPresetsTable.userId, usersTable.id),
     );
 
-  if (!found.length) return null;
+  if (!found.length || !found[0]) return null;
 
   return {
     ...found[0].users,
