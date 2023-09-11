@@ -107,18 +107,31 @@ export const Practice = component$(() => {
         <div class="mt-3 flex flex-col gap-3">
           <div class="text-sm font-medium">Today's progress</div>
           <div class="text-gray-500 flex flex-col gap-1">
-            {categories.map(({ key, color, count }) => {
-              const yesterdayCount =
-                (yesterdayWordsRepartition?.[key] as number) || 0;
-              const diff = count - yesterdayCount;
-              return (
-                <div key={key} class="flex gap-1">
-                  <div class={`h-4 w-4 ${color} rounded`} />
-                  <div class="text-xs font-bold w-20">{key}</div>
-                  <div class="text-xs text-gray-400">{diff}</div>
-                </div>
-              );
-            })}
+            {yesterdayWordsRepartition &&
+              categories
+                .filter((c) => c.key !== "remaining")
+                .map(({ key, color, count }) => {
+                  const yesterdayCount =
+                    yesterdayWordsRepartition?.[key as "total"] || 0;
+
+                  const diff = count - yesterdayCount;
+                  const percent = (
+                    (diff / (wordsRepartition?.total || 1)) *
+                    100
+                  ).toFixed(0);
+                  return (
+                    <div key={key} class="flex gap-3">
+                      <div class="text-xs font-bold w-20 text-right">
+                        ({key})
+                      </div>
+                      <div
+                        class={`h-4 w-4 ${color} rounded`}
+                        style={{ width: percent + "%" }}
+                      />
+                      <div class="text-xs">{diff}</div>
+                    </div>
+                  );
+                })}
           </div>
         </div>
       </div>
@@ -134,16 +147,6 @@ export const Practice = component$(() => {
   );
 });
 
-// bg-sk-100
-// bg-sk-200
-// bg-sk-300
-// bg-sk-400
-// bg-sk-500
-// bg-sk-600
-// bg-sk-700
-// bg-sk-800
-// bg-sk-900
-//
 interface Repartition extends Record<string, number> {
   total: number;
   validated: number;
@@ -188,11 +191,11 @@ const Analytics = ({
 };
 
 const getCategoryColor = (k: string) => {
-  if (k === "validated") return "bg-blue-500";
-  if (k === "remaining") return "bg-gray-300";
+  if (k === "validated") return "bg-sky-500";
+  if (k === "remaining") return "bg-gray-200";
 
   const parsed = parseInt(k);
-  if (parsed >= 0) return `bg-sky-${parsed * 2}00`;
+  if (parsed >= 0) return `bg-pink-${parsed + 1}00`;
 };
 
 const getCategories = (repartition: Repartition | undefined) => {
@@ -206,3 +209,13 @@ const getCategories = (repartition: Repartition | undefined) => {
       return { key: k, count: v, color, percent };
     });
 };
+
+// bg-pink-100
+// bg-pink-200
+// bg-pink-300
+// bg-pink-400
+// bg-pink-500
+// bg-pink-600
+// bg-pink-700
+// bg-pink-800
+// bg-pink-900
