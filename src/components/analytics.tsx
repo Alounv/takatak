@@ -8,7 +8,7 @@ export const Analytics = component$(
     } = useAnalyticsForYesterday();
 
     return (
-      <div>
+      <div class="flex flex-col gap-2">
         {yesterdayWordsRepartition && (
           <Progress
             repartition={yesterdayWordsRepartition}
@@ -49,13 +49,13 @@ const Progress = ({
           return (
             <div
               key={key}
-              class={`flex flex-col rounded-sm ${color}`}
+              class={`flex flex-col rounded-sm h-3 ${color}`}
               style={{ width: `${percent}%` }}
               title={`${key}: ${count}`}
             >
               {count > 0 && (
                 <span
-                  class={`text-xs pl-1 ${
+                  class={`text-xs pl-1 absolute ${
                     i % 2 === 0 ? "translate-y-4" : "-translate-y-4"
                   }`}
                 >
@@ -102,7 +102,7 @@ const Categories = ({
                       : `typed ${key} times`}
                   </div>
                   <div
-                    class={`h-4 w-4 ${color} rounded`}
+                    class={`h-3 w-3 ${color} rounded`}
                     style={{ width: percent + "%" }}
                   />
                   <div class="text-xs">{diff}</div>
@@ -116,7 +116,7 @@ const Categories = ({
 
 const getCategoryColor = (k: string) => {
   if (k === "validated") return "bg-sky-500";
-  if (k === "remaining") return "bg-gray-200";
+  if (k === "remaining") return "bg-gray-200 dark:bg-gray-800";
 
   const parsed = parseInt(k);
   if (parsed >= 0) return `bg-pink-${parsed + 1}00`;
