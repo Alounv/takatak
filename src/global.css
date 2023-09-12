@@ -14,4 +14,13 @@ body {
     rgba(24, 182, 246, 0.3) 0%,
     rgba(172, 127, 244, 0.3) 100%
   );
+
+  @media (prefers-color-scheme: dark) {
+    background: linear-gradient(
+        90deg,
+        rgba(24, 182, 246, 0.5) 0%,
+        rgba(172, 127, 244, 0.5) 100%
+      ),
+      black;
+  }
 }

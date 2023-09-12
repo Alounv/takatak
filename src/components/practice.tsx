@@ -83,7 +83,7 @@ export const Practice = component$(() => {
   });
 
   return (
-    <div class="flex flex-col gap-8">
+    <div class="flex flex-col gap-10">
       <Title preset={preset} />
 
       <Analytics wordsRepartition={wordsRepartition} />

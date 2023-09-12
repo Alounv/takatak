@@ -44,12 +44,12 @@ const Progress = ({
   return (
     <div class="flex items-center gap-4">
       <div class="text-sm w-20 font-medium">{title}</div>
-      <div class="flex w-full my-3">
+      <div class="flex w-full my-3 gap-1">
         {categories.map(({ key, color, percent, count }, i) => {
           return (
             <div
               key={key}
-              class={`flex flex-col border-white border rounded ${color}`}
+              class={`flex flex-col rounded-sm ${color}`}
               style={{ width: `${percent}%` }}
               title={`${key}: ${count}`}
             >
@@ -81,7 +81,7 @@ const Categories = ({
   return (
     <div class="mt-3 flex flex-col gap-3">
       <div class="text-sm font-medium">Progress since 24 h</div>
-      <div class="text-gray-500 flex flex-col gap-1">
+      <div class="text-gray-400 flex flex-col gap-1">
         {yesterdayWordsRepartition &&
           categories
             .filter((c) => c.key !== "remaining")

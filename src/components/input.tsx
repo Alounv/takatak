@@ -13,7 +13,7 @@ export const InputArea = ({
       <Input id="typing-area" type="text" signal={inputSignal} autoFocus />
 
       {index === 0 && (
-        <div class="text-red-500 py-1 px-4 rounded flex items-center font-bold">
+        <div class="text-red-500 py-1 px-4 rounded flex items-center font-medium">
           {`press space twice to start`}
         </div>
       )}

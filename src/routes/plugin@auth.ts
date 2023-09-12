@@ -39,7 +39,7 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
               userId: newUser.id,
               name: "Default",
               ...defaultPreset,
-              text: "Hello World",
+              text: "some words to start with",
             });
 
             await selectPreset(db, { userId: newUser.id, presetId: preset.id });

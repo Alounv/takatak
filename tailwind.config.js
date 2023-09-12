@@ -7,5 +7,6 @@ module.exports = {
   theme: {
     extend: {},
   },
+  darkMode: "media",
   plugins: [require("@tailwindcss/forms"), require("flowbite/plugin")],
 };

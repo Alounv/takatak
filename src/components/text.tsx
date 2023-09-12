@@ -1,8 +1,8 @@
 const CLS = {
-  past: "text-gray-200",
-  current: "text-sky-600",
-  error: "text-red-500",
-  future: "text-black",
+  past: "text-gray-200 dark:text-gray-600",
+  current: "text-black dark:text-white",
+  error: "text-red-500 dark:text-red-500",
+  future: "text-black dark:text-white opacity-50",
 };
 
 const getClass = (index: number, currentIndex: number, hasError: boolean) => {
@@ -24,7 +24,7 @@ const Word = ({
   key: number;
 }) => {
   const cls = getClass(index, currentIndex, hasError);
-  return <span class={`${cls} text-md`}>{word} </span>;
+  return <span class={`${cls}`}>{word} </span>;
 };
 
 export const Text = ({
@@ -37,7 +37,7 @@ export const Text = ({
   hasError: boolean;
 }) => {
   return (
-    <div class="flex  flex-wrap items-center gap-2 text-lg tracking-wide font-medium">
+    <div class="flex  flex-wrap items-center gap-1.5 text-lg tracking-wider">
       {words.map((word, i) =>
         word === " " ? null : (
           <Word

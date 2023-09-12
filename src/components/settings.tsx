@@ -1,5 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { Form } from "@builder.io/qwik-city";
+import { Button } from "~/design/button";
 import { Input } from "~/design/input";
 import { TextArea } from "~/design/textarea";
 import {
@@ -20,7 +21,7 @@ export const Settings = component$(() => {
   const currentPreset = presetsList.find((p) => p.id === selectedPresetId);
 
   return (
-    <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-10">
       <div class="text-lg font-medium">Settings</div>
 
       <div>
@@ -47,18 +48,20 @@ const PresetList = component$(
   }) => {
     const deleteAction = useDeletePreset();
     const selectAction = useSelectPreset();
+
     return (
-      <div class="flex flex-col gap-3 w-full">
+      <ul class="flex flex-col gap-3 w-full">
         {presetsList.map((p) => {
           const isSelected = p.id === selectedPresetId;
           return (
-            <div key={p.id} class="flex gap-1 items-center">
+            <li key={p.id} class="flex gap-3 items-center">
+              -
               <label
                 for={p.id}
-                class={`text-white font-medium py-1 px-2 rounded text-sm ${
+                class={`px-2 py-1 text-sm font-medium text-center text-white rounded-lg ${
                   isSelected
-                    ? "bg-sky-600 font-bold"
-                    : "bg-gray-300 hover:bg-gray-500"
+                    ? "bg-sky-700 hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-sky-300 dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800"
+                    : "bg-gray-400 hover:bg-gray-500 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-800 dark:hover:bg-gray-900 dark:focus:ring-gray-900"
                 }`}
               >
                 {p.name}
@@ -74,20 +77,25 @@ const PresetList = component$(
                 }}
               />
               {!isSelected && (
-                <button
-                  class="rounded-lg text-sm font-semibold px-2 py-1 border border-gray-400 text-gray-500 hover:bg-gray-200"
+                <Button
+                  small
                   disabled={isSelected}
+                  isSecondary
                   onClick$={() => {
-                    deleteAction.submit({ id: p.id });
+                    if (
+                      confirm("Are you sure you want to delete this preset?")
+                    ) {
+                      deleteAction.submit({ id: p.id });
+                    }
                   }}
                 >
                   delete
-                </button>
+                </Button>
               )}
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
     );
   },
 );
@@ -103,12 +111,7 @@ export const CreatePreset = component$(() => {
         id="name"
         placeholder="New preset name"
       />
-      <button
-        type="submit"
-        class="rounded-lg text-sm font-semibold py-2  px-4 bg-sky-600 text-white hover:bg-sky-700"
-      >
-        create
-      </button>
+      <Button type="submit">create</Button>
     </Form>
   );
 });
@@ -164,12 +167,7 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
         </div>
 
         <div class="self-end flex gap-1">
-          <button
-            type="submit"
-            class="rounded-lg text-sm font-semibold py-2  px-4 bg-sky-600 text-white hover:bg-sky-700"
-          >
-            save
-          </button>
+          <Button type="submit">save</Button>
         </div>
       </Form>
     </div>

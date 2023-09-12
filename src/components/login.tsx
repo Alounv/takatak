@@ -1,6 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 
 import { Form } from "@builder.io/qwik-city";
+import { Button } from "~/design/button";
 import { useAuthSignin } from "~/routes/plugin@auth";
 
 export const Login = component$(() => {
@@ -12,12 +13,7 @@ export const Login = component$(() => {
       <Form action={loginAction}>
         <input type="hidden" name="providerId" value="github" />
         <div class="login">
-          <button
-            type="submit"
-            class="rounded-lg text-sm font-semibold py-1.5 px-4 bg-gray-600 text-white hover:bg-gray-700"
-          >
-            Login
-          </button>
+          <Button type="submit">Login</Button>
         </div>
       </Form>
     </div>
