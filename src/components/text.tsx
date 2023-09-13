@@ -5,10 +5,24 @@ const CLS = {
   future: "text-black dark:text-white opacity-50",
 };
 
-const getClass = (index: number, currentIndex: number, hasError: boolean) => {
+const getWordClass = (
+  index: number,
+  currentIndex: number,
+  hasError: boolean,
+) => {
   if (index < currentIndex) return CLS.past;
   if (index === currentIndex) return hasError ? CLS.error : CLS.current;
   return CLS.future;
+};
+
+const getLetterClass = (
+  index: number,
+  currentIndex: number,
+  hasError: boolean,
+) => {
+  if (index < currentIndex) return CLS.past;
+  if (index === currentIndex) return hasError ? CLS.error : CLS.current;
+  return CLS.current;
 };
 
 const Word = ({
@@ -16,14 +30,31 @@ const Word = ({
   currentIndex,
   hasError,
   word,
+  input,
 }: {
   index: number;
   currentIndex: number;
   hasError: boolean;
   word: string;
   key: number;
+  input?: string;
 }) => {
-  const cls = getClass(index, currentIndex, hasError);
+  if (input && index === currentIndex) {
+    return (
+      <span class="flex">
+        {word.split("").map((c, i) => {
+          const cls = getLetterClass(i, input.length, hasError);
+          return (
+            <span key={i} class={`${cls}`}>
+              {c}
+            </span>
+          );
+        })}
+      </span>
+    );
+  }
+
+  const cls = getWordClass(index, currentIndex, hasError);
   return <span class={`${cls}`}>{word} </span>;
 };
 
@@ -31,10 +62,12 @@ export const Text = ({
   words,
   currentIndex,
   hasError,
+  input,
 }: {
   words: string[];
   currentIndex: number;
   hasError: boolean;
+  input?: string;
 }) => {
   return (
     <div class="flex  flex-wrap items-center gap-1.5 text-lg tracking-wider">
@@ -46,6 +79,7 @@ export const Text = ({
             currentIndex={currentIndex}
             hasError={hasError}
             word={word}
+            input={input}
           />
         ),
       )}

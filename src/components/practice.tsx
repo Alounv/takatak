@@ -99,6 +99,7 @@ export const Practice = component$(() => {
         words={cachedWords.value}
         currentIndex={indexSignal.value}
         hasError={lastErrorSignal.value === indexSignal.value}
+        input={preset?.highlightLetter ? inputSignal.value : undefined}
       />
 
       <InputArea index={indexSignal.value} inputSignal={inputSignal} />

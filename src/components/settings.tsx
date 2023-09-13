@@ -3,6 +3,7 @@ import { Form } from "@builder.io/qwik-city";
 import { Button } from "~/design/button";
 import { Input } from "~/design/input";
 import { TextArea } from "~/design/textarea";
+import { Toggle } from "~/design/toggle";
 import {
   useCreateEmptyPreset,
   useDeletePreset,
@@ -153,6 +154,12 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               type="number"
               name="repetitions"
               value={preset.repetitions}
+            />
+            <Toggle
+              cls="mt-2"
+              label="Highlight letter"
+              name="highlightLetter"
+              checked={preset.highlightLetter || false}
             />
           </div>
 

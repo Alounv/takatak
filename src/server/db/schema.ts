@@ -1,4 +1,4 @@
-import { pgTable, timestamp, text, uuid, integer } from "drizzle-orm/pg-core";
+import { pgTable, timestamp, text, uuid, integer, boolean } from "drizzle-orm/pg-core";
 import type { InferModel } from "drizzle-orm";
 
 // --- USER ---
@@ -49,6 +49,7 @@ export const presetsTable = pgTable("presets", {
   sessionLength: integer("session_length").notNull(),
   speed: integer("speed").notNull(),
   repetitions: integer("repetitions").notNull(),
+  highlightLetter: boolean("highlight_letter").default(false),
 });
 
 export type Preset = InferModel<typeof presetsTable>;

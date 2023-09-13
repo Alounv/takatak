@@ -43,7 +43,7 @@ export const useCreateEmptyPreset = routeAction$(
 
 export const useUpdatePreset = routeAction$(
   async (
-    { id, name, text, sessionLength, speed, repetitions },
+    { id, name, text, sessionLength, speed, repetitions, highlightLetter },
     { cookie, fail },
   ) => {
     try {
@@ -52,6 +52,11 @@ export const useUpdatePreset = routeAction$(
       if (!user) {
         return { success: false, error: "You must login to update preset" };
       }
+
+      console.log({
+        highlightLetter,
+      });
+
       await updatePreset(db, {
         id,
         userId: user.id,
@@ -60,6 +65,7 @@ export const useUpdatePreset = routeAction$(
         ...(sessionLength && { sessionLength: parseInt(sessionLength) }),
         ...(speed && { speed: parseInt(speed) }),
         ...(repetitions && { repetitions: parseInt(repetitions) }),
+        highlightLetter: highlightLetter === "on",
       });
 
       return { success: true };
@@ -75,6 +81,7 @@ export const useUpdatePreset = routeAction$(
     sessionLength: z.string().optional(),
     speed: z.string().optional(),
     repetitions: z.string().optional(),
+    highlightLetter: z.string().optional(),
   }),
 );
 
