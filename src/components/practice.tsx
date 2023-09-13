@@ -11,6 +11,7 @@ import { useSaveData, useSaveError } from "~/routes/plugin@save";
 import { usePresetAndTrainingWords } from "~/routes/plugin@preset";
 import { Analytics } from "./analytics";
 import { Title } from "./practice-title";
+import { Confetti } from "~/integrations/react/confetti";
 
 export const Practice = component$(() => {
   // --- states ---
@@ -19,6 +20,7 @@ export const Practice = component$(() => {
   const startTime = useSignal(0);
   const lastErrorSignal = useSignal(-1);
   const cachedWords = useSignal<string[]>([]);
+  const finishSignal = useSignal(false);
 
   // --- loaders ---
   const {
@@ -39,7 +41,8 @@ export const Practice = component$(() => {
 
   useVisibleTask$(({ track }) => {
     if (!currentWord.value) {
-      window.location.reload();
+      finishSignal.value = true;
+      // window.location.reload();
       return;
     }
 
@@ -84,6 +87,10 @@ export const Practice = component$(() => {
 
   return (
     <div class="flex flex-col gap-10">
+      {finishSignal.value && (
+        <Confetti client:load onFinish$={() => window.location.reload()} />
+      )}
+
       <Title preset={preset} />
 
       <Analytics wordsRepartition={wordsRepartition} />
@@ -92,6 +99,7 @@ export const Practice = component$(() => {
         words={cachedWords.value}
         currentIndex={indexSignal.value}
         hasError={lastErrorSignal.value === indexSignal.value}
+        input={preset?.highlightLetter ? inputSignal.value : undefined}
       />
 
       <InputArea index={indexSignal.value} inputSignal={inputSignal} />

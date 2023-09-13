@@ -1,0 +1,1 @@
+ALTER TABLE "presets" ADD COLUMN "highlight_letter" boolean DEFAULT false;
