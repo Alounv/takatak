@@ -14,6 +14,7 @@ export const Input = ({
   name,
   id,
   cls,
+  innerCls,
   type = "text",
 }: {
   id: string;
@@ -26,6 +27,7 @@ export const Input = ({
   name?: string;
   type?: "text" | "number";
   cls?: string;
+  innerCls?: string;
 }) => {
   return (
     <div class={cls}>
@@ -41,7 +43,7 @@ export const Input = ({
         value={value}
         name={name}
         id={id}
-        class={inputCls}
+        class={inputCls + " " + innerCls}
         bind:value={signal}
         autoFocus={autoFocus}
       />

@@ -31,6 +31,7 @@ const ReactConfettiAnimation = ({ onFinish }: { onFinish: () => void }) => {
       height={height}
       gravity={0.5}
       initialVelocityY={20}
+      tweenDuration={3000}
     />
   );
 };

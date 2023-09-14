@@ -47,7 +47,6 @@ export const Practice = component$(() => {
   useVisibleTask$(({ track }) => {
     if (!currentWord.value) {
       finishSignal.value = true;
-      // window.location.reload();
       return;
     }
 
