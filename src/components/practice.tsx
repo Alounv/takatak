@@ -9,6 +9,7 @@ import { InputArea } from "./input";
 import { getIsMatching } from "~/utils";
 import { useSaveData, useSaveError } from "~/routes/plugin@save";
 import { usePresetAndTrainingWords } from "~/routes/plugin@preset";
+import type { Repartition } from "./analytics";
 import { Analytics } from "./analytics";
 import { Title } from "./practice-title";
 import { Confetti } from "~/integrations/react/confetti";
@@ -20,6 +21,7 @@ export const Practice = component$(() => {
   const startTime = useSignal(0);
   const lastErrorSignal = useSignal(-1);
   const cachedWords = useSignal<string[]>([]);
+  const cachedWordsRepartition = useSignal<Repartition | undefined>();
   const finishSignal = useSignal(false);
 
   // --- loaders ---
@@ -33,6 +35,7 @@ export const Practice = component$(() => {
 
   useVisibleTask$(() => {
     cachedWords.value = words;
+    cachedWordsRepartition.value = wordsRepartition;
   });
 
   const currentWord = useComputed$(
@@ -97,7 +100,11 @@ export const Practice = component$(() => {
 
       <Title preset={preset} />
 
-      <Analytics wordsRepartition={wordsRepartition} />
+      <Analytics
+        wordsRepartition={
+          finishSignal.value ? wordsRepartition : cachedWordsRepartition.value
+        }
+      />
 
       <Text
         words={cachedWords.value}

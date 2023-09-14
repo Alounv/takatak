@@ -27,7 +27,7 @@ export const Analytics = component$(
   },
 );
 
-interface Repartition extends Record<string, number> {
+export interface Repartition extends Record<string, number> {
   total: number;
   validated: number;
   remaining: number;
@@ -49,7 +49,7 @@ const Progress = ({
           return (
             <div
               key={key}
-              class={`flex flex-col rounded-sm h-3 ${color}`}
+              class={`flex flex-col rounded-sm h-3 ${color} transition-all`}
               style={{ width: `${percent}%` }}
               title={`${key}: ${count}`}
             >
@@ -106,11 +106,11 @@ const Categories = ({
                   {key === "validated" ? "✅ validated" : `typed ${key} times`}
                 </div>
                 <div
-                  class={`h-3 w-3 ${color} rounded`}
+                  class={`h-3 w-3 ${color} rounded transition-all`}
                   style={{ width: percentShown + "%" }}
                 />
-                <div class="text-xs">
-                  {diff} ({percent}%)
+                <div class="text-xs text-black">
+                  <strong>{diff}</strong> ({percent}%)
                 </div>
               </div>
             );
