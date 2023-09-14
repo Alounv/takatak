@@ -53,10 +53,6 @@ export const useUpdatePreset = routeAction$(
         return { success: false, error: "You must login to update preset" };
       }
 
-      console.log({
-        highlightLetter,
-      });
-
       await updatePreset(db, {
         id,
         userId: user.id,
