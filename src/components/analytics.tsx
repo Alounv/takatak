@@ -78,37 +78,43 @@ const Categories = ({
   yesterdayWordsRepartition: Repartition | undefined;
 }) => {
   const categories = getCategories(wordsRepartition);
+  const total = wordsRepartition?.["total"] || 1;
+  let maximumDiff = 0;
+
+  const categoriesWithDiff = categories
+    .filter((c) => c.key !== "remaining")
+    .map((c) => {
+      const diff =
+        c.count - (yesterdayWordsRepartition?.[c.key as "total"] || 0);
+      maximumDiff = Math.max(maximumDiff, diff);
+      return { ...c, diff };
+    });
+
+  const denominator = Math.min(total, maximumDiff * 2);
+
   return (
     <div class="mt-3 flex flex-col gap-3">
       <div class="text-sm font-medium">Progress since 24 h</div>
       <div class="text-gray-400 flex flex-col gap-1">
         {yesterdayWordsRepartition &&
-          categories
-            .filter((c) => c.key !== "remaining")
-            .map(({ key, color, count }) => {
-              const yesterdayCount =
-                yesterdayWordsRepartition?.[key as "total"] || 0;
-
-              const diff = count - yesterdayCount;
-              const percent = (
-                (diff / (wordsRepartition?.total || 1)) *
-                100
-              ).toFixed(0);
-              return (
-                <div key={key} class="flex gap-3">
-                  <div class="text-xs w-24 text-right">
-                    {key === "validated"
-                      ? "✅ validated"
-                      : `typed ${key} times`}
-                  </div>
-                  <div
-                    class={`h-3 w-3 ${color} rounded`}
-                    style={{ width: percent + "%" }}
-                  />
-                  <div class="text-xs">{diff}</div>
+          categoriesWithDiff.map(({ key, color, diff }) => {
+            const percentShown = ((diff / denominator) * 100).toFixed(0);
+            const percent = ((diff / total) * 100).toFixed(0);
+            return (
+              <div key={key} class="flex gap-3">
+                <div class="text-xs w-24 text-right">
+                  {key === "validated" ? "✅ validated" : `typed ${key} times`}
                 </div>
-              );
-            })}
+                <div
+                  class={`h-3 w-3 ${color} rounded`}
+                  style={{ width: percentShown + "%" }}
+                />
+                <div class="text-xs">
+                  {diff} ({percent}%)
+                </div>
+              </div>
+            );
+          })}
       </div>
     </div>
   );

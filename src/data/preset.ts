@@ -20,7 +20,6 @@ export const updatePreset = async (
   db: NeonHttpDatabase,
   { id, ...partial }: Partial<NewPreset> & { id: string },
 ) => {
-  console.log({ id, partial });
   const updated = await db
     .update(presetsTable)
     .set(partial)

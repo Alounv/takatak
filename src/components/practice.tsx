@@ -39,6 +39,11 @@ export const Practice = component$(() => {
     () => cachedWords.value?.[indexSignal.value],
   );
 
+  const hasError = !getIsMatching({
+    target: currentWord.value,
+    input: inputSignal.value,
+  });
+
   useVisibleTask$(({ track }) => {
     if (!currentWord.value) {
       finishSignal.value = true;
@@ -98,7 +103,7 @@ export const Practice = component$(() => {
       <Text
         words={cachedWords.value}
         currentIndex={indexSignal.value}
-        hasError={lastErrorSignal.value === indexSignal.value}
+        hasError={hasError}
         input={preset?.highlightLetter ? inputSignal.value : undefined}
       />
 
