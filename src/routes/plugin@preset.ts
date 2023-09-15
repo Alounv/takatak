@@ -121,8 +121,9 @@ const getAnalyticsForPreset = async (
   },
 ) => {
   const preset = await getPreset(db, presetId);
-  const presetWords = getWordsFromText(preset.text);
-  console.log("presetWords", presetWords);
+  const presetWords = preset.corpusSize
+    ? getWordsFromText(preset.text).slice(0, preset.corpusSize)
+    : getWordsFromText(preset.text);
 
   const { analytics, wordsRepartition } = await getAnalyticsPerWord(db, {
     userId: userId,
