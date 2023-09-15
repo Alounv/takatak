@@ -40,6 +40,13 @@
       "when": 1694606145722,
       "tag": "0005_illegal_master_mold",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1694792096718,
+      "tag": "0006_pale_hulk",
+      "breakpoints": true
     }
   ]
 }

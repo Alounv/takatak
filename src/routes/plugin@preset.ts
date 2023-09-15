@@ -11,6 +11,7 @@ import { routeLoader$ } from "@builder.io/qwik-city";
 import { getUserAndDb } from "./plugin@user";
 import { getAnalyticsPerWord } from "~/data/result";
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
+import { getWordsFromText } from "~/utils";
 
 export const defaultPreset = {
   text: "",
@@ -43,7 +44,16 @@ export const useCreateEmptyPreset = routeAction$(
 
 export const useUpdatePreset = routeAction$(
   async (
-    { id, name, text, sessionLength, speed, repetitions, highlightLetter },
+    {
+      id,
+      name,
+      text,
+      sessionLength,
+      speed,
+      repetitions,
+      highlightLetter,
+      corpusSize,
+    },
     { cookie, fail },
   ) => {
     try {
@@ -61,6 +71,7 @@ export const useUpdatePreset = routeAction$(
         ...(sessionLength && { sessionLength: parseInt(sessionLength) }),
         ...(speed && { speed: parseInt(speed) }),
         ...(repetitions && { repetitions: parseInt(repetitions) }),
+        ...(corpusSize && { corpusSize: parseInt(corpusSize) }),
         highlightLetter: highlightLetter === "on",
       });
 
@@ -78,6 +89,7 @@ export const useUpdatePreset = routeAction$(
     speed: z.string().optional(),
     repetitions: z.string().optional(),
     highlightLetter: z.string().optional(),
+    corpusSize: z.string().optional(),
   }),
 );
 
@@ -109,7 +121,8 @@ const getAnalyticsForPreset = async (
   },
 ) => {
   const preset = await getPreset(db, presetId);
-  const presetWords = [...new Set((preset.text || "").split(" "))];
+  const presetWords = getWordsFromText(preset.text);
+  console.log("presetWords", presetWords);
 
   const { analytics, wordsRepartition } = await getAnalyticsPerWord(db, {
     userId: userId,

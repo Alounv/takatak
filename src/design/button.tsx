@@ -1,4 +1,5 @@
-import { PropFunction, Slot, component$ } from "@builder.io/qwik";
+import type { PropFunction } from "@builder.io/qwik";
+import { Slot, component$ } from "@builder.io/qwik";
 
 const base = "text-sm font-medium text-center rounded-lg";
 
@@ -15,12 +16,14 @@ export const Button = component$(
     type = "button",
     isSecondary,
     small,
+    cls,
   }: {
     disabled?: boolean;
     onClick$?: PropFunction;
     type?: "button" | "submit" | "reset";
     isSecondary?: boolean;
     small?: boolean;
+    cls?: string;
   }) => {
     return (
       <button
@@ -29,7 +32,9 @@ export const Button = component$(
           " " +
           (isSecondary ? secondaryColor : standardColor) +
           " " +
-          (small ? "px-2 py-1" : "px-3 py-2")
+          (small ? "px-2 py-1" : "px-3 py-2") +
+          " " +
+          cls
         }
         type={type}
         onClick$={onClick$}

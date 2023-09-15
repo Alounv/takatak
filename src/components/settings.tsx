@@ -2,6 +2,7 @@ import { component$ } from "@builder.io/qwik";
 import { Form } from "@builder.io/qwik-city";
 import { Button } from "~/design/button";
 import { Input } from "~/design/input";
+import { Slider } from "~/design/slider";
 import { TextArea } from "~/design/textarea";
 import { Toggle } from "~/design/toggle";
 import {
@@ -13,6 +14,7 @@ import {
 } from "~/routes/plugin@preset";
 import { useGetCurrentUser } from "~/routes/plugin@user";
 import type { Preset } from "~/server/db/schema";
+import { getWordsFromText } from "~/utils";
 
 export const Settings = component$(() => {
   const user = useGetCurrentUser();
@@ -119,6 +121,7 @@ export const CreatePreset = component$(() => {
 
 export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
   const updateAction = useUpdatePreset();
+  const totalCorpusSize = getWordsFromText(preset.text || "").length;
 
   return (
     <div>
@@ -142,7 +145,7 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               value={preset.sessionLength}
             />
             <Input
-              label="Validation speed"
+              label="Validation speed (WPM)"
               id="speed"
               type="number"
               name="speed"
@@ -161,20 +164,27 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               name="highlightLetter"
               checked={preset.highlightLetter || false}
             />
+            <Button type="submit" cls="mt-2">
+              save
+            </Button>
           </div>
 
-          <TextArea
-            id="text"
-            cls="flex-1"
-            name="text"
-            value={preset.text}
-            label="Words to learn"
-            rows={12}
-          />
-        </div>
-
-        <div class="self-end flex gap-1">
-          <Button type="submit">save</Button>
+          <div class="flex-1">
+            <TextArea
+              id="text"
+              cls="flex-1"
+              name="text"
+              value={preset.text}
+              label="Words to learn"
+              rows={12}
+            />
+            <Slider
+              name="corpusSize"
+              value={preset.corpusSize || totalCorpusSize}
+              max={totalCorpusSize}
+              label="Corpus size"
+            />
+          </div>
         </div>
       </Form>
     </div>

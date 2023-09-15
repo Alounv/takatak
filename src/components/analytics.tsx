@@ -90,7 +90,8 @@ const Categories = ({
       return { ...c, diff };
     });
 
-  const denominator = Math.min(total, maximumDiff * 2);
+  const maxDenominator = Math.min(1000, total);
+  const denominator = Math.max(maxDenominator, maximumDiff);
 
   return (
     <div class="mt-3 flex flex-col gap-3">
