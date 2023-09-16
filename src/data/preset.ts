@@ -2,7 +2,7 @@ import type { NewPreset } from "~/server/db/schema";
 import { selectedPresetsTable } from "~/server/db/schema";
 import { presetsTable } from "~/server/db/schema";
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { SharedTextNames, getSharedText } from "./texts";
 
 export const createPreset = async (
@@ -34,15 +34,26 @@ export const createInitialPresets = async (
     repetitions,
   }: Pick<NewPreset, "userId" | "sessionLength" | "speed" | "repetitions">,
 ) => {
-  const presestToCreate = Object.values(SharedTextNames).map((name) => ({
-    userId,
-    name,
-    text: "",
-    sessionLength,
-    speed,
-    repetitions,
-    isShared: true,
-  }));
+  const existingSharedNames = (
+    await db
+      .select({ name: presetsTable.name })
+      .from(presetsTable)
+      .where(
+        and(eq(presetsTable.userId, userId), eq(presetsTable.isShared, true)),
+      )
+  ).map((p) => p.name);
+
+  const presestToCreate = Object.values(SharedTextNames)
+    .filter((n: string) => !existingSharedNames.includes(n))
+    .map((name) => ({
+      userId,
+      name,
+      text: "",
+      sessionLength,
+      speed,
+      repetitions,
+      isShared: true,
+    }));
 
   const inserted = await db
     .insert(presetsTable)
