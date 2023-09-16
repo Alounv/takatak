@@ -16,6 +16,7 @@ export const Input = ({
   cls,
   innerCls,
   type = "text",
+  disabled = false,
 }: {
   id: string;
   label?: string;
@@ -28,15 +29,17 @@ export const Input = ({
   type?: "text" | "number";
   cls?: string;
   innerCls?: string;
+  disabled?: boolean;
 }) => {
   return (
-    <div class={cls}>
+    <div class={cls + (disabled ? " opacity-50" : "")}>
       {label && (
         <label for={id} class={labelCls}>
-          {label}
+          {label + (disabled ? " (disabled)" : "")}
         </label>
       )}
       <input
+        disabled={disabled}
         placeholder={placeholder}
         required={required}
         type={type}

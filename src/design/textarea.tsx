@@ -9,6 +9,7 @@ export const TextArea = ({
   id,
   cls,
   rows = 3,
+  disabled = false,
 }: {
   id: string;
   label?: string;
@@ -16,16 +17,18 @@ export const TextArea = ({
   name?: string;
   cls?: string;
   rows?: number;
+  disabled?: boolean;
 }) => {
   return (
-    <div class={cls}>
+    <div class={cls + (disabled ? " opacity-50" : "")}>
       {label && (
         <label for={id} class={labelCls}>
-          {label}
+          {label + (disabled ? " (disabled)" : "")}
         </label>
       )}
       <textarea
         value={value}
+        disabled={disabled}
         name={name}
         id={id}
         class={inputCls}

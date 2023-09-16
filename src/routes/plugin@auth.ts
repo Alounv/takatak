@@ -6,7 +6,7 @@ import { z } from "zod";
 import { dbConfig } from "~/server/db/client";
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-import { createPreset, selectPreset } from "~/data/preset";
+import { createInitialPresets, selectPreset } from "~/data/preset";
 import { defaultPreset } from "./plugin@preset";
 
 export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
@@ -35,14 +35,15 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
               avatar_url: image,
             });
 
-            const preset = await createPreset(db, {
+            const presets = await createInitialPresets(db, {
               userId: newUser.id,
-              name: "Default",
               ...defaultPreset,
-              text: "some words to start with",
             });
 
-            await selectPreset(db, { userId: newUser.id, presetId: preset.id });
+            await selectPreset(db, {
+              userId: newUser.id,
+              presetId: presets[0].id,
+            });
           }
         }
 

@@ -50,7 +50,8 @@ export const presetsTable = pgTable("presets", {
   speed: integer("speed").notNull(),
   repetitions: integer("repetitions").notNull(),
   highlightLetter: boolean("highlight_letter").default(false),
-  corpusSize: integer("corpus_size")
+  corpusSize: integer("corpus_size"),
+  isShared: boolean("is_shared").default(false)
 });
 
 export type Preset = InferModel<typeof presetsTable>;

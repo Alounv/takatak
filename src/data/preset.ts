@@ -3,6 +3,7 @@ import { selectedPresetsTable } from "~/server/db/schema";
 import { presetsTable } from "~/server/db/schema";
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import { eq } from "drizzle-orm";
+import { SharedTextNames, getSharedText } from "./texts";
 
 export const createPreset = async (
   db: NeonHttpDatabase,
@@ -10,10 +11,45 @@ export const createPreset = async (
 ) => {
   const inserted = await db
     .insert(presetsTable)
-    .values({ userId, name, text, sessionLength, speed, repetitions })
+    .values({
+      userId,
+      name,
+      text,
+      sessionLength,
+      speed,
+      repetitions,
+      isShared: false,
+    })
     .returning();
 
   return inserted[0];
+};
+
+export const createInitialPresets = async (
+  db: NeonHttpDatabase,
+  {
+    userId,
+    sessionLength,
+    speed,
+    repetitions,
+  }: Pick<NewPreset, "userId" | "sessionLength" | "speed" | "repetitions">,
+) => {
+  const presestToCreate = Object.values(SharedTextNames).map((name) => ({
+    userId,
+    name,
+    text: "",
+    sessionLength,
+    speed,
+    repetitions,
+    isShared: true,
+  }));
+
+  const inserted = await db
+    .insert(presetsTable)
+    .values(presestToCreate)
+    .returning();
+
+  return inserted;
 };
 
 export const updatePreset = async (
@@ -30,12 +66,15 @@ export const updatePreset = async (
 };
 
 export const getPreset = async (db: NeonHttpDatabase, id: string) => {
-  const preset = await db
+  const [p] = await db
     .select()
     .from(presetsTable)
     .where(eq(presetsTable.id, id));
 
-  return preset[0];
+  return {
+    ...p,
+    text: p.isShared ? getSharedText(p.name) : p.text,
+  };
 };
 
 export const listUserPresets = async (db: NeonHttpDatabase, userId: string) => {
@@ -44,7 +83,10 @@ export const listUserPresets = async (db: NeonHttpDatabase, userId: string) => {
     .from(presetsTable)
     .where(eq(presetsTable.userId, userId));
 
-  return presets;
+  return presets.map((p) => ({
+    ...p,
+    text: p.isShared ? getSharedText(p.name) : p.text,
+  }));
 };
 
 export const selectPreset = async (

@@ -1,5 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { Form } from "@builder.io/qwik-city";
+import type { SharedTextNames } from "~/data/texts";
+import { getSharedText } from "~/data/texts";
 import { Button } from "~/design/button";
 import { Input } from "~/design/input";
 import { Slider } from "~/design/slider";
@@ -79,10 +81,10 @@ const PresetList = component$(
                   selectAction.submit({ id: p.id });
                 }}
               />
-              {!isSelected && (
+              {!isSelected && !p.isShared && (
                 <Button
                   small
-                  disabled={isSelected}
+                  disabled={isSelected || !!p.isShared}
                   isSecondary
                   onClick$={() => {
                     if (
@@ -136,6 +138,7 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               name="name"
               value={preset.name}
               label="Name"
+              disabled={!!preset.isShared}
             />
             <Input
               label="Session length"
@@ -174,9 +177,10 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               id="text"
               cls="flex-1"
               name="text"
-              value={preset.text}
+              value={preset.isShared ? getSharedText(preset.name) : preset.text}
               label="Words to learn"
               rows={12}
+              disabled={!!preset.isShared}
             />
             <Slider
               name="corpusSize"
