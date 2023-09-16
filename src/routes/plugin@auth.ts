@@ -45,6 +45,11 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } =
               userId: newUser.id,
               presetId: presets[0].id,
             });
+          } else {
+            await createInitialPresets(db, {
+              userId: user.id,
+              ...defaultPreset,
+            });
           }
         }
 

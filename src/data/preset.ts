@@ -55,6 +55,10 @@ export const createInitialPresets = async (
       isShared: true,
     }));
 
+  if (!presestToCreate.length) {
+    return [];
+  }
+
   const inserted = await db
     .insert(presetsTable)
     .values(presestToCreate)
