@@ -110,7 +110,7 @@ const Categories = ({
                   class={`h-3 w-3 ${color} rounded transition-all`}
                   style={{ width: percentShown + "%" }}
                 />
-                <div class="text-xs text-black">
+                <div class="text-xs text-black dark:text-white">
                   <strong>{diff}</strong> ({percent}%)
                 </div>
               </div>
