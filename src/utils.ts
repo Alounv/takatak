@@ -10,5 +10,6 @@ export const getIsMatching = ({
 };
 
 export const getWordsFromText = (text: string = "") => {
-  return [...new Set(text.split(/[ :\n:\r]/))];
+  const textWithoutSpaces = text.replace(/[\n\r\s]+/g, " ");
+  return [...new Set(textWithoutSpaces.split(" "))];
 };
