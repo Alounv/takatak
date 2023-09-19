@@ -3,7 +3,7 @@ import { Profile } from "./profile";
 import { Logo, Settings } from "./logo";
 import { useGetCurrentUser } from "~/routes/plugin@user";
 
-const LINK_STYLE =
+export const LINK_STYLE =
   "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm";
 
 const Start = component$(() => {

@@ -13,6 +13,7 @@ import type { Repartition } from "./analytics";
 import { Analytics } from "./analytics";
 import { Title } from "./practice-title";
 import { Confetti } from "~/integrations/react/confetti";
+import { SuccessMessage } from "./placeholder";
 
 export const Practice = component$(() => {
   // --- states ---
@@ -106,12 +107,16 @@ export const Practice = component$(() => {
         }
       />
 
-      <Text
-        words={cachedWords.value}
-        currentIndex={indexSignal.value}
-        hasError={hasError}
-        input={preset?.highlightLetter ? inputSignal.value : undefined}
-      />
+      {cachedWords.value.length <= 1 ? (
+        <SuccessMessage />
+      ) : (
+        <Text
+          words={cachedWords.value}
+          currentIndex={indexSignal.value}
+          hasError={hasError}
+          input={preset?.highlightLetter ? inputSignal.value : undefined}
+        />
+      )}
 
       <InputArea index={indexSignal.value} inputSignal={inputSignal} />
     </div>
