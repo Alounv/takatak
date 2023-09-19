@@ -1,6 +1,6 @@
 import type { NewResult } from "~/server/db/schema";
 import { resultsTable } from "~/server/db/schema";
-import { and, desc, eq, inArray, lte, sql } from "drizzle-orm";
+import { and, eq, inArray, lte, sql } from "drizzle-orm";
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 
 export async function createResult(
@@ -34,7 +34,6 @@ export async function getAnalyticsPerWord(
   const sq = db
     .select()
     .from(resultsTable)
-    .orderBy(desc(resultsTable.date))
     .where(
       and(
         eq(resultsTable.userId, userId),
@@ -50,7 +49,7 @@ export async function getAnalyticsPerWord(
       count: sql<number>`count(${sq.id})`,
       lastDurations: sql<
         number[]
-      >`(array_agg(${sq.duration}))[1:${repetitions}]`,
+      >`(array_agg(${sq.duration} ORDER BY ${sq.date} DESC))[1:${repetitions}]`,
     })
     .from(sq)
     .groupBy(sq.word);
