@@ -62,23 +62,20 @@ export async function getAnalyticsPerWord(
     total: results.length,
   };
 
-  const analytics = results
-    .filter((r) => {
-      const count = Math.min(r.count, repetitions);
-      wordsRepartition[count] ??= 0;
-      wordsRepartition[count] += 1;
-      return r.count >= repetitions;
-    })
-    .map((r) => {
-      const maxDuration = Math.max(...r.lastDurations);
-      const speed = (((r.word.length + 1) / (maxDuration / 1000)) * 60) / 5;
-      if (speed >= targetSpeed) {
-        wordsRepartition["validated"] ??= 0;
-        wordsRepartition["validated"] += 1;
-      }
-      return { word: r.word, speed };
-    })
-    .sort((a, b) => b.speed - a.speed);
+  const analytics = results.map((r) => {
+    const count = Math.min(r.count, repetitions);
+    wordsRepartition[count] ??= 0;
+    wordsRepartition[count] += 1;
+    const maxDuration = Math.max(...r.lastDurations);
+    const speed = (((r.word.length + 1) / (maxDuration / 1000)) * 60) / 5;
+    const roundedSpeed = Math.round(speed * 10) / 10;
+
+    if (r.count >= repetitions && speed >= targetSpeed) {
+      wordsRepartition["validated"] ??= 0;
+      wordsRepartition["validated"] += 1;
+    }
+    return { word: r.word, speed: roundedSpeed };
+  });
 
   return {
     analytics,

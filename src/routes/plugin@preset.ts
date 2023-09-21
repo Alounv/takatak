@@ -133,10 +133,14 @@ const getAnalyticsForPreset = async (
     cutoffDate,
   });
 
+  const analyticsWithNeverTyped = presetWords.map((w) => {
+    const data = analytics.find((a) => a.word === w);
+    return data || { word: w, speed: 0 };
+  });
+
   return {
     preset,
-    analytics,
-    presetWords,
+    analytics: analyticsWithNeverTyped,
     wordsRepartition: {
       ...wordsRepartition,
       total: presetWords.length,
@@ -166,28 +170,30 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
   if (!user.selectedPresetId)
     return { success: false, error: "No preset selected" };
 
-  const { wordsRepartition, analytics, preset, presetWords } =
-    await getAnalyticsForPreset(db, {
+  const { wordsRepartition, analytics, preset } = await getAnalyticsForPreset(
+    db,
+    {
       presetId: user.selectedPresetId,
       userId: user.id,
-    });
-
-  const validatedWords = preset
-    ? analytics.filter((x) => x.speed >= preset.speed).map((x) => x.word)
-    : [];
-
-  const nonValidatedWords = presetWords.filter(
-    (x) => !validatedWords.includes(x),
+    },
   );
 
-  const factor = Math.min(5, preset.sessionLength / nonValidatedWords.length);
+  const nonValidatedWords = preset
+    ? analytics
+        .filter((x) => !x.speed || x.speed < preset.speed)
+        .sort((a, b) => a.speed - b.speed)
+    : [];
+
+  const factor = Math.min(3, preset.sessionLength / nonValidatedWords.length);
 
   const practiceWords = new Array(Math.ceil(factor))
     .fill(nonValidatedWords)
     .flat()
+    .slice(0, preset.sessionLength - 1)
+    .map((w) => w.word)
     .sort(() => Math.random() - 0.5);
 
-  const words = [" ", ...practiceWords.slice(0, preset.sessionLength - 1)];
+  const words = [" ", ...practiceWords];
 
   return {
     success: true,
