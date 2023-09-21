@@ -133,6 +133,8 @@ const getAnalyticsForPreset = async (
     cutoffDate,
   });
 
+  const worstSpeed = analytics[0]?.speed || 0;
+
   const analyticsWithNeverTyped = presetWords.map((w) => {
     const data = analytics.find((a) => a.word === w);
     return data || { word: w, speed: 0 };
@@ -141,6 +143,7 @@ const getAnalyticsForPreset = async (
   return {
     preset,
     analytics: analyticsWithNeverTyped,
+    worstSpeed,
     wordsRepartition: {
       ...wordsRepartition,
       total: presetWords.length,
@@ -170,13 +173,13 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
   if (!user.selectedPresetId)
     return { success: false, error: "No preset selected" };
 
-  const { wordsRepartition, analytics, preset } = await getAnalyticsForPreset(
-    db,
-    {
+  const { wordsRepartition, analytics, preset, worstSpeed } =
+    await getAnalyticsForPreset(db, {
       presetId: user.selectedPresetId,
       userId: user.id,
-    },
-  );
+    });
+
+  console.log({ worstSpeed });
 
   const nonValidatedWords = preset
     ? analytics

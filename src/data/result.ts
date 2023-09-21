@@ -66,8 +66,9 @@ export async function getAnalyticsPerWord(
     const count = Math.min(r.count, repetitions);
     wordsRepartition[count] ??= 0;
     wordsRepartition[count] += 1;
-    const maxDuration = Math.max(...r.lastDurations);
-    const speed = (((r.word.length + 1) / (maxDuration / 1000)) * 60) / 5;
+    const avgDuration =
+      r.lastDurations.reduce((a, b) => a + b, 0) / r.lastDurations.length;
+    const speed = (((r.word.length + 1) / (avgDuration / 1000)) * 60) / 5;
     const roundedSpeed = Math.round(speed * 10) / 10;
 
     if (r.count >= repetitions && speed >= targetSpeed) {
