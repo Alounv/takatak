@@ -160,12 +160,12 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               value={preset.repetitions}
             />
             <Toggle
-              cls="mt-2"
+              cls="mt-4"
               label="Highlight letter"
               name="highlightLetter"
               checked={preset.highlightLetter || false}
             />
-            <Button type="submit" cls="mt-2">
+            <Button type="submit" cls="mt-4">
               save
             </Button>
           </div>
@@ -177,8 +177,16 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               name="text"
               value={preset.text}
               label="Words to learn"
-              rows={12}
+              rows={9}
               disabled={!!preset.isShared}
+            />
+            <Input
+              cls="mt-2"
+              label="Letters that count as 2 letters in WPM"
+              id="doubleLetters"
+              type="text"
+              name="doubleLetters"
+              value={preset.doubleLetters || ""}
             />
             <Slider
               name="corpusSize"

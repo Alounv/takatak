@@ -23,12 +23,14 @@ export async function getAnalyticsPerWord(
     currentWords,
     targetSpeed,
     cutoffDate,
+    doubleLetters,
   }: {
     userId: string;
     repetitions: number;
     currentWords: string[];
     targetSpeed: number;
     cutoffDate?: Date;
+    doubleLetters: string;
   },
 ) {
   const sq = db
@@ -68,7 +70,13 @@ export async function getAnalyticsPerWord(
     wordsRepartition[count] += 1;
     const avgDuration =
       r.lastDurations.reduce((a, b) => a + b, 0) / r.lastDurations.length;
-    const speed = (((r.word.length + 1) / (avgDuration / 1000)) * 60) / 5;
+
+    const lettersCount =
+      r.word.length + // word
+      1 + // space
+      r.word.split("").filter((l) => doubleLetters.includes(l)).length; // double letters
+
+    const speed = ((lettersCount / (avgDuration / 1000)) * 60) / 5;
     const roundedSpeed = Math.round(speed * 10) / 10;
 
     if (r.count >= repetitions && speed >= targetSpeed) {

@@ -1,3 +1,5 @@
+const LONG_CHARS = ["^", "¨"];
+
 export const getIsMatching = ({
   target,
   input,
@@ -6,7 +8,7 @@ export const getIsMatching = ({
   input: string;
 }) => {
   if (!target) return false;
-  return target.startsWith(input) || ["^", "¨"].includes(input.slice(-1));
+  return target.startsWith(input) || LONG_CHARS.includes(input.slice(-1));
 };
 
 export const getWordsFromText = (text: string = "") => {

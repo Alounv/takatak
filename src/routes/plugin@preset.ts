@@ -53,6 +53,7 @@ export const useUpdatePreset = routeAction$(
       repetitions,
       highlightLetter,
       corpusSize,
+      doubleLetters,
     },
     { cookie, fail },
   ) => {
@@ -68,6 +69,7 @@ export const useUpdatePreset = routeAction$(
         userId: user.id,
         name,
         text,
+        doubleLetters,
         ...(sessionLength && { sessionLength: parseInt(sessionLength) }),
         ...(speed && { speed: parseInt(speed) }),
         ...(repetitions && { repetitions: parseInt(repetitions) }),
@@ -90,6 +92,7 @@ export const useUpdatePreset = routeAction$(
     repetitions: z.string().optional(),
     highlightLetter: z.string().optional(),
     corpusSize: z.string().optional(),
+    doubleLetters: z.string().optional(),
   }),
 );
 
@@ -130,6 +133,7 @@ const getAnalyticsForPreset = async (
     repetitions: preset.repetitions,
     currentWords: presetWords,
     targetSpeed: preset.speed,
+    doubleLetters: preset.doubleLetters || "",
     cutoffDate,
   });
 
@@ -173,13 +177,13 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
   if (!user.selectedPresetId)
     return { success: false, error: "No preset selected" };
 
-  const { wordsRepartition, analytics, preset, worstSpeed } =
-    await getAnalyticsForPreset(db, {
+  const { wordsRepartition, analytics, preset } = await getAnalyticsForPreset(
+    db,
+    {
       presetId: user.selectedPresetId,
       userId: user.id,
-    });
-
-  console.log({ worstSpeed });
+    },
+  );
 
   const nonValidatedWords = preset
     ? analytics
