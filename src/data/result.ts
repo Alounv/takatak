@@ -64,7 +64,7 @@ export async function getAnalyticsPerWord(
     total: results.length,
   };
 
-  const analytics = results.map((r) => {
+  const nonValidatedWords = results.flatMap((r) => {
     const count = Math.min(r.count, repetitions);
     wordsRepartition[count] ??= 0;
     wordsRepartition[count] += 1;
@@ -82,12 +82,22 @@ export async function getAnalyticsPerWord(
     if (r.count >= repetitions && speed >= targetSpeed) {
       wordsRepartition["validated"] ??= 0;
       wordsRepartition["validated"] += 1;
+      return [];
     }
-    return { word: r.word, speed: roundedSpeed };
+
+    return [{ word: r.word, speed: roundedSpeed }];
   });
 
+  const typedWords = new Set(results.map((a) => a.word));
+
+  nonValidatedWords.sort((a, b) => a.speed - b.speed);
+
+  const neverTypedWords = currentWords
+    .filter((w) => !typedWords.has(w))
+    .map((w) => ({ word: w, speed: 0 }));
+
   return {
-    analytics,
+    nonValidatedWords: [...neverTypedWords, ...nonValidatedWords],
     wordsRepartition: {
       ...wordsRepartition,
       [repetitions]:
