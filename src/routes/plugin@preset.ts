@@ -12,6 +12,7 @@ import { getUserAndDb } from "./plugin@user";
 import { getAnalyticsPerWord } from "~/data/result";
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import { getWordsFromText } from "~/utils";
+import type { Preset } from "~/server/db/schema";
 
 export const defaultPreset = {
   text: "",
@@ -114,20 +115,17 @@ export const useListPresets = routeLoader$(async ({ cookie }) => {
 const getAnalyticsForPreset = async (
   db: NeonHttpDatabase,
   {
-    presetId,
+    preset,
     userId,
     cutoffDate,
+    presetWords,
   }: {
-    presetId: string;
+    preset: Preset;
+    presetWords: string[];
     userId: string;
     cutoffDate?: Date;
   },
 ) => {
-  const preset = await getPreset(db, presetId);
-  const presetWords = preset.corpusSize
-    ? getWordsFromText(preset.text).slice(0, preset.corpusSize)
-    : getWordsFromText(preset.text);
-
   const { nonValidatedWords, wordsRepartition } = await getAnalyticsPerWord(
     db,
     {
@@ -151,32 +149,25 @@ const getAnalyticsForPreset = async (
   };
 };
 
-export const useAnalyticsForYesterday = routeLoader$(async ({ cookie }) => {
-  const { user, db } = await getUserAndDb(cookie);
-  if (!user) return { success: false, error: "You must login to get preset" };
-  if (!user.selectedPresetId)
-    return { success: false, error: "No preset selected" };
-
-  const { wordsRepartition } = await getAnalyticsForPreset(db, {
-    presetId: user.selectedPresetId,
-    userId: user.id,
-    cutoffDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
-  });
-
-  return { success: true, wordsRepartition };
-});
-
 export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
   const { user, db } = await getUserAndDb(cookie);
   if (!user) return { success: false, error: "You must login to get preset" };
   if (!user.selectedPresetId)
     return { success: false, error: "No preset selected" };
 
-  const { wordsRepartition, nonValidatedWords, preset } =
-    await getAnalyticsForPreset(db, {
-      presetId: user.selectedPresetId,
+  const preset = await getPreset(db, user.selectedPresetId);
+  const presetWords = preset.corpusSize
+    ? getWordsFromText(preset.text).slice(0, preset.corpusSize)
+    : getWordsFromText(preset.text);
+
+  const { wordsRepartition, nonValidatedWords } = await getAnalyticsForPreset(
+    db,
+    {
+      preset,
+      presetWords,
       userId: user.id,
-    });
+    },
+  );
 
   const factor = Math.min(3, preset.sessionLength / nonValidatedWords.length);
 
@@ -189,11 +180,20 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
 
   const words = [" ", ...practiceWords];
 
+  const { wordsRepartition: yesterdayRepartition } =
+    await getAnalyticsForPreset(db, {
+      preset,
+      presetWords,
+      userId: user.id,
+      cutoffDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
+    });
+
   return {
     success: true,
     preset,
     words,
     wordsRepartition,
+    yesterdayRepartition,
   };
 });
 

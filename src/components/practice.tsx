@@ -27,7 +27,7 @@ export const Practice = component$(() => {
 
   // --- loaders ---
   const {
-    value: { preset, words = [], wordsRepartition },
+    value: { preset, words = [], wordsRepartition, yesterdayRepartition },
   } = usePresetAndTrainingWords();
 
   // --- actions ---
@@ -102,6 +102,7 @@ export const Practice = component$(() => {
       <Title preset={preset} />
 
       <Analytics
+        yesterdayWordsRepartition={yesterdayRepartition}
         wordsRepartition={
           finishSignal.value ? wordsRepartition : cachedWordsRepartition.value
         }
