@@ -3,25 +3,22 @@ import { component$ } from "@builder.io/qwik";
 export const Analytics = component$(
   ({
     wordsRepartition,
-    yesterdayWordsRepartition,
+    pastWordsRepartition,
   }: {
     wordsRepartition: Repartition | undefined;
-    yesterdayWordsRepartition: Repartition | undefined;
+    pastWordsRepartition: Repartition | undefined;
   }) => {
     return (
       <div class="flex flex-col gap-2">
-        {yesterdayWordsRepartition && (
-          <Progress
-            repartition={yesterdayWordsRepartition}
-            title={`24 h ago`}
-          />
+        {pastWordsRepartition && (
+          <Progress repartition={pastWordsRepartition} title={`6 h ago`} />
         )}
         {wordsRepartition && (
           <Progress repartition={wordsRepartition} title={`Current`} />
         )}
         <Categories
           wordsRepartition={wordsRepartition}
-          yesterdayWordsRepartition={yesterdayWordsRepartition}
+          pastWordsRepartition={pastWordsRepartition}
         />
       </div>
     );
@@ -73,10 +70,10 @@ const Progress = ({
 
 const Categories = ({
   wordsRepartition,
-  yesterdayWordsRepartition,
+  pastWordsRepartition,
 }: {
   wordsRepartition: Repartition | undefined;
-  yesterdayWordsRepartition: Repartition | undefined;
+  pastWordsRepartition: Repartition | undefined;
 }) => {
   const categories = getCategories(wordsRepartition);
   const total = wordsRepartition?.["total"] || 1;
@@ -85,8 +82,7 @@ const Categories = ({
   const categoriesWithDiff = categories
     .filter((c) => c.key !== "remaining")
     .map((c) => {
-      const diff =
-        c.count - (yesterdayWordsRepartition?.[c.key as "total"] || 0);
+      const diff = c.count - (pastWordsRepartition?.[c.key as "total"] || 0);
       maximumDiff = Math.max(maximumDiff, diff);
       return { ...c, diff };
     });
@@ -98,7 +94,7 @@ const Categories = ({
     <div class="mt-3 flex flex-col gap-3">
       <div class="text-sm font-medium">Progress since 24 h</div>
       <div class="text-gray-400 flex flex-col gap-1">
-        {yesterdayWordsRepartition &&
+        {pastWordsRepartition &&
           categoriesWithDiff.map(({ key, color, diff }) => {
             const percentShown = ((diff / denominator) * 100).toFixed(0);
             const percent = ((diff / total) * 100).toFixed(0);

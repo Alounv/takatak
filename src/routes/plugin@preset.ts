@@ -180,20 +180,22 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
 
   const words = [" ", ...practiceWords];
 
-  const { wordsRepartition: yesterdayRepartition } =
-    await getAnalyticsForPreset(db, {
+  const { wordsRepartition: pastRepartition } = await getAnalyticsForPreset(
+    db,
+    {
       preset,
       presetWords,
       userId: user.id,
-      cutoffDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    });
+      cutoffDate: new Date(Date.now() - 6 * 60 * 60 * 1000),
+    },
+  );
 
   return {
     success: true,
     preset,
     words,
     wordsRepartition,
-    yesterdayRepartition,
+    pastRepartition,
   };
 });
 
