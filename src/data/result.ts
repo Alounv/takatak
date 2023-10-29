@@ -90,7 +90,7 @@ export async function getAnalyticsPerWord(
 
   const typedWords = new Set(results.map((a) => a.word));
 
-  nonValidatedWords.sort((a, b) => a.speed - b.speed);
+  nonValidatedWords.sort((a, b) => b.speed - a.speed);
 
   const neverTypedWords = currentWords
     .filter((w) => !typedWords.has(w))
