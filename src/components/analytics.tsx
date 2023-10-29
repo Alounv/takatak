@@ -92,7 +92,7 @@ const Categories = ({
 
   return (
     <div class="mt-3 flex flex-col gap-3">
-      <div class="text-sm font-medium">Progress since 24 h</div>
+      <div class="text-sm font-medium">Progress since 6 h</div>
       <div class="text-gray-400 flex flex-col gap-1">
         {pastWordsRepartition &&
           categoriesWithDiff.map(({ key, color, diff }) => {
