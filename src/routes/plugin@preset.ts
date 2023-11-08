@@ -169,7 +169,7 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
     },
   );
 
-  const factor = Math.min(3, preset.sessionLength / nonValidatedWords.length);
+  const factor = Math.min(2, preset.sessionLength / nonValidatedWords.length);
 
   const practiceWords = new Array(Math.ceil(factor))
     .fill(nonValidatedWords)
