@@ -8,9 +8,10 @@ const CLS = {
 const getWordClass = (
   index: number,
   currentIndex: number,
+  hadError: boolean,
   hasError: boolean,
 ) => {
-  if (index < currentIndex) return CLS.past;
+  if (index < currentIndex) return hadError ? CLS.error : CLS.past;
   if (index === currentIndex) return hasError ? CLS.error : CLS.current;
   return CLS.future;
 };
@@ -28,12 +29,14 @@ const getLetterClass = (
 const Word = ({
   index,
   currentIndex,
+  hadError,
   hasError,
   word,
   input,
 }: {
   index: number;
   currentIndex: number;
+  hadError: boolean;
   hasError: boolean;
   word: string;
   key: number;
@@ -54,7 +57,7 @@ const Word = ({
     );
   }
 
-  const cls = getWordClass(index, currentIndex, hasError);
+  const cls = getWordClass(index, currentIndex, hadError, hasError);
   return <span class={`${cls}`}>{word} </span>;
 };
 
@@ -62,11 +65,13 @@ export const Text = ({
   words,
   currentIndex,
   hasError,
+  previousErrors,
   input,
 }: {
   words: string[];
   currentIndex: number;
   hasError: boolean;
+  previousErrors: number[];
   input?: string;
 }) => {
   return (
@@ -77,6 +82,7 @@ export const Text = ({
             key={i}
             index={i}
             currentIndex={currentIndex}
+            hadError={previousErrors.includes(i)}
             hasError={hasError}
             word={word}
             input={input}

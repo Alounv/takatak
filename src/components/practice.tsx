@@ -21,6 +21,7 @@ export const Practice = component$(() => {
   const inputSignal = useSignal("");
   const startTime = useSignal(0);
   const lastErrorSignal = useSignal(-1);
+  const previousErrors = useSignal<number[]>([]);
   const cachedWords = useSignal<string[]>([]);
   const cachedWordsRepartition = useSignal<Repartition | undefined>();
   const finishSignal = useSignal(false);
@@ -46,6 +47,11 @@ export const Practice = component$(() => {
   const hasError = !getIsMatching({
     target: currentWord.value,
     input: inputSignal.value,
+  });
+
+  useVisibleTask$(({ track }) => {
+    track(() => lastErrorSignal.value);
+    previousErrors.value = [...previousErrors.value, indexSignal.value];
   });
 
   useVisibleTask$(({ track }) => {
@@ -113,6 +119,7 @@ export const Practice = component$(() => {
       ) : (
         <Text
           words={cachedWords.value}
+          previousErrors={previousErrors.value}
           currentIndex={indexSignal.value}
           hasError={hasError}
           input={preset?.highlightLetter ? inputSignal.value : undefined}
