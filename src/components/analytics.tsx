@@ -77,6 +77,7 @@ const Categories = ({
 }) => {
   const categories = getCategories(wordsRepartition);
   const total = wordsRepartition?.["total"] || 1;
+  const remaining = wordsRepartition?.["remaining"] || 1;
   let maximumDiff = 0;
 
   const categoriesWithDiff = categories
@@ -87,7 +88,7 @@ const Categories = ({
       return { ...c, diff };
     });
 
-  const maxDenominator = Math.min(1000, total);
+  const maxDenominator = Math.min(1000, remaining);
   const denominator = Math.max(maxDenominator, maximumDiff);
 
   return (
