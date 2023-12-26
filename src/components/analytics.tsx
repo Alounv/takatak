@@ -77,7 +77,8 @@ const Categories = ({
 }) => {
   const categories = getCategories(wordsRepartition);
   const total = wordsRepartition?.["total"] || 1;
-  const remaining = wordsRepartition?.["remaining"] || 1;
+  const validated = wordsRepartition?.["validated"] || 0;
+  const remaining = total - validated;
   let maximumDiff = 0;
 
   const categoriesWithDiff = categories
