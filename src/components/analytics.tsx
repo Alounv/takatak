@@ -106,7 +106,7 @@ const Categories = ({
                   {key === "validated" ? "✅ validated" : `typed ${key} times`}
                 </div>
                 <div
-                  class={`h-3 w-3 ${color} rounded transition-all`}
+                  class={`h-5 w-3 ${color} rounded transition-all`}
                   style={{ width: percentShown + "%" }}
                 />
                 <div class="text-xs text-black dark:text-white">
