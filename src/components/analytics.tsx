@@ -90,7 +90,7 @@ const Categories = ({
     });
 
   const maxDenominator = Math.min(1000, remaining);
-  const denominator = Math.max(maxDenominator, maximumDiff);
+  const denominator = Math.max(maxDenominator, maximumDiff + remaining);
 
   return (
     <div class="mt-3 flex flex-col gap-3">
@@ -98,6 +98,7 @@ const Categories = ({
       <div class="text-gray-400 flex flex-col gap-1">
         {pastWordsRepartition &&
           categoriesWithDiff.map(({ key, color, diff }) => {
+            if (diff <= 0) return null;
             const percentShown = ((diff / denominator) * 100).toFixed(0);
             const percent = ((diff / total) * 100).toFixed(0);
             return (
