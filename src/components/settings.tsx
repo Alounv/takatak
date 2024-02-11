@@ -152,12 +152,11 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               name="speed"
               value={preset.speed}
             />
-            <Input
+            <Slider
               label="Repetitions used to calculate speed"
-              id="repetitions"
-              type="number"
               name="repetitions"
               value={preset.repetitions}
+              max={3}
             />
             <Toggle
               cls="mt-4"

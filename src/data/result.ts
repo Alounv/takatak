@@ -1,18 +1,28 @@
 import type { NewResult } from "~/server/db/schema";
 import { resultsTable } from "~/server/db/schema";
-import { and, eq, inArray, lte, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, lte, sql } from "drizzle-orm";
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 
 export async function createResult(
   db: NeonHttpDatabase,
   { userId, word, duration }: NewResult,
 ) {
-  const inserted = await db
-    .insert(resultsTable)
-    .values({ userId, word, duration })
-    .returning();
+  await db.insert(resultsTable).values({ userId, word, duration }).returning();
 
-  return inserted[0];
+  const currents = await db
+    .select()
+    .from(resultsTable)
+    .where(and(eq(resultsTable.userId, userId), eq(resultsTable.word, word)))
+    .orderBy(desc(resultsTable.date));
+
+  const mostRecent = currents.slice(0, 3);
+  const obsoleteIds = currents
+    .filter((c) => !mostRecent.includes(c))
+    .map((c) => c.id);
+
+  if (obsoleteIds.length) {
+    await db.delete(resultsTable).where(inArray(resultsTable.id, obsoleteIds));
+  }
 }
 
 export async function getAnalyticsPerWord(
