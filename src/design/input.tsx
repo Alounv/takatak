@@ -1,4 +1,4 @@
-import { useVisibleTask$, type Signal, component$, useTask$, useSignal } from "@builder.io/qwik";
+import { useVisibleTask$, type Signal, component$, useSignal } from "@builder.io/qwik";
 
 const labelCls = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
 const inputCls =
