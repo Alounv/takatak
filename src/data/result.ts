@@ -15,10 +15,10 @@ export async function createResult(
     .where(and(eq(resultsTable.userId, userId), eq(resultsTable.word, word)))
     .orderBy(desc(resultsTable.date));
 
-  const mostRecent = currents.slice(0, 3);
+  const mostRecent = currents.slice(0, 3).map((c) => c.id);
   const obsoleteIds = currents
-    .filter((c) => !mostRecent.includes(c))
-    .map((c) => c.id);
+    .map((c) => c.id)
+    .filter((c) => !mostRecent.includes(c));
 
   if (obsoleteIds.length) {
     await db.delete(resultsTable).where(inArray(resultsTable.id, obsoleteIds));
