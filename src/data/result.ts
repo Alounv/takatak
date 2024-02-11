@@ -7,7 +7,7 @@ export async function createResult(
   db: NeonHttpDatabase,
   { userId, word, duration }: NewResult,
 ) {
-  await db.insert(resultsTable).values({ userId, word, duration }).returning();
+  await db.insert(resultsTable).values({ userId, word, duration });
 
   const currents = await db
     .select()
@@ -15,7 +15,8 @@ export async function createResult(
     .where(and(eq(resultsTable.userId, userId), eq(resultsTable.word, word)))
     .orderBy(desc(resultsTable.date));
 
-  const mostRecent = currents.slice(0, 3).map((c) => c.id);
+  // keep only the 6 most recent results should be enough for current + history with 3 repetitions max
+  const mostRecent = currents.slice(0, 6).map((c) => c.id);
   const obsoleteIds = currents
     .map((c) => c.id)
     .filter((c) => !mostRecent.includes(c));
