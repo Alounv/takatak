@@ -11,12 +11,14 @@ export const Slider = component$(
     value,
     max,
     cls,
+    id,
   }: {
     label: string;
     name: string;
     value: number;
     max: number;
     cls?: string;
+    id: string;
   }) => {
     const signal = useSignal<string>(value.toString());
 
@@ -26,10 +28,10 @@ export const Slider = component$(
           {label} ({signal.value} words)
         </label>
         <input
-          id={name}
+          id={id}
           name={name}
           type="range"
-          bind:value={signal}
+          bind: value={signal}
           class={inputCls}
           min="0"
           max={max}

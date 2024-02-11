@@ -153,6 +153,7 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               value={preset.speed}
             />
             <Slider
+              id="repetitions"
               label="Repetitions used to calculate speed"
               name="repetitions"
               value={preset.repetitions}
@@ -188,6 +189,7 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               value={preset.doubleLetters || ""}
             />
             <Slider
+              id="corpusSize"
               name="corpusSize"
               value={preset.corpusSize || totalCorpusSize}
               max={totalCorpusSize}
