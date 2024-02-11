@@ -54,6 +54,16 @@ export const Practice = component$(() => {
     previousErrors.value = [...previousErrors.value, indexSignal.value];
   });
 
+
+  useVisibleTask$(({ track }) => {
+    const input = track(() => inputSignal.value);
+    const index = track(() => indexSignal.value);
+    // first letter typed
+    if (index === 0 && input.length === 1) {
+      startTime.value = Date.now();
+    }
+  });
+
   useVisibleTask$(({ track }) => {
     if (!currentWord.value) {
       finishSignal.value = true;
@@ -97,12 +107,13 @@ export const Practice = component$(() => {
         lastErrorSignal.value = indexSignal.value;
       }
     }
+
   });
 
   return (
     <div class="flex flex-col gap-10">
       {finishSignal.value && (
-        <Confetti client:load onFinish$={() => window.location.reload()} />
+        <Confetti client: load onFinish$={() => window.location.reload()} />
       )}
 
       <Title preset={preset} />
@@ -126,7 +137,7 @@ export const Practice = component$(() => {
         />
       )}
 
-      <InputArea index={indexSignal.value} inputSignal={inputSignal} />
+      <InputArea inputSignal={inputSignal} />
     </div>
   );
 });

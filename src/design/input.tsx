@@ -1,16 +1,16 @@
-import type { Signal } from "@builder.io/qwik";
+import { useVisibleTask$, type Signal, component$, useTask$, useSignal } from "@builder.io/qwik";
 
 const labelCls = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
 const inputCls =
   "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 
-export const Input = ({
+export const Input = component$(({
   label,
   signal,
   value,
   required,
   placeholder,
-  autoFocus,
+  autoFocus = false,
   name,
   id,
   cls,
@@ -31,6 +31,12 @@ export const Input = ({
   innerCls?: string;
   disabled?: boolean;
 }) => {
+  const inputRef = useSignal<HTMLInputElement>()
+  useVisibleTask$(() => {
+    if (autoFocus) {
+      inputRef.value?.focus();
+    }
+  })
   return (
     <div class={cls + (disabled ? " opacity-50" : "")}>
       {label && (
@@ -39,6 +45,7 @@ export const Input = ({
         </label>
       )}
       <input
+        ref={inputRef}
         disabled={disabled}
         placeholder={placeholder}
         required={required}
@@ -47,9 +54,9 @@ export const Input = ({
         name={name}
         id={id}
         class={inputCls + " " + innerCls}
-        bind:value={signal}
+        bind: value={signal}
         autoFocus={autoFocus}
       />
     </div>
   );
-};
+});
