@@ -54,7 +54,6 @@ export const Practice = component$(() => {
     previousErrors.value = [...previousErrors.value, indexSignal.value];
   });
 
-
   useVisibleTask$(({ track }) => {
     const input = track(() => inputSignal.value);
     const index = track(() => indexSignal.value);
@@ -107,7 +106,6 @@ export const Practice = component$(() => {
         lastErrorSignal.value = indexSignal.value;
       }
     }
-
   });
 
   return (
@@ -137,7 +135,10 @@ export const Practice = component$(() => {
         />
       )}
 
-      <InputArea inputSignal={inputSignal} />
+      <InputArea
+        inputSignal={inputSignal}
+        ignoresSimpleBackspaces={preset?.forbidSimpleLetterBackspace ?? false}
+      />
     </div>
   );
 });

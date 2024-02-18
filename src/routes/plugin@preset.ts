@@ -53,6 +53,7 @@ export const useUpdatePreset = routeAction$(
       speed,
       repetitions,
       highlightLetter,
+      forbidSimpleLetterBackspace,
       corpusSize,
       doubleLetters,
     },
@@ -76,6 +77,7 @@ export const useUpdatePreset = routeAction$(
         ...(repetitions && { repetitions: parseInt(repetitions) }),
         ...(corpusSize && { corpusSize: parseInt(corpusSize) }),
         highlightLetter: highlightLetter === "on",
+        forbidSimpleLetterBackspace: forbidSimpleLetterBackspace === "on",
       });
 
       return { success: true };
@@ -92,6 +94,7 @@ export const useUpdatePreset = routeAction$(
     speed: z.string().optional(),
     repetitions: z.string().optional(),
     highlightLetter: z.string().optional(),
+    forbidSimpleLetterBackspace: z.string().optional(),
     corpusSize: z.string().optional(),
     doubleLetters: z.string().optional(),
   }),

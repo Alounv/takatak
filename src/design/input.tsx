@@ -16,6 +16,7 @@ export const AutoFocusedInput = component$(({
   innerCls,
   type = "text",
   disabled = false,
+  ignoresSimpleBackspaces = false,
 }: {
   id: string;
   label?: string;
@@ -27,6 +28,7 @@ export const AutoFocusedInput = component$(({
   type?: "text" | "number";
   cls?: string;
   innerCls?: string;
+  ignoresSimpleBackspaces?: boolean;
   disabled?: boolean;
 }) => {
   const inputRef = useSignal<HTMLInputElement>()
@@ -49,6 +51,7 @@ export const AutoFocusedInput = component$(({
       innerCls={innerCls}
       type={type}
       disabled={disabled}
+      ignoresSimpleBackspaces={ignoresSimpleBackspaces}
       ref={inputRef}
     />
   );
@@ -67,6 +70,7 @@ export const Input = ({
   innerCls,
   type = "text",
   disabled = false,
+  ignoresSimpleBackspaces = false,
   ref,
 }: {
   id: string;
@@ -81,6 +85,7 @@ export const Input = ({
   cls?: string;
   innerCls?: string;
   disabled?: boolean;
+  ignoresSimpleBackspaces?: boolean;
   ref?: Signal<HTMLInputElement | undefined>;
 }) => {
   return (
@@ -95,6 +100,12 @@ export const Input = ({
         disabled={disabled}
         placeholder={placeholder}
         required={required}
+        onKeyDown$={(e) => {
+          if (ignoresSimpleBackspaces && e.key === "Backspace" && !e.altKey) {
+            // @ts-ignore
+            e.preventDefault();
+          }
+        }}
         type={type}
         value={value}
         name={name}

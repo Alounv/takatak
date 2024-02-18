@@ -165,6 +165,12 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               name="highlightLetter"
               checked={preset.highlightLetter || false}
             />
+            <Toggle
+              cls="mt-4"
+              label="Forbid simple letter backspace"
+              name="forbidSimpleLetterBackspace"
+              checked={preset.forbidSimpleLetterBackspace || false}
+            />
             <Button type="submit" cls="mt-4">
               save
             </Button>
