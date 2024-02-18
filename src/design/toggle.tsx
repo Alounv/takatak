@@ -5,25 +5,31 @@ const spanCls = "ml-3 text-sm font-medium text-gray-900 dark:text-gray-300";
 
 export const Toggle = ({
   label,
+  description,
   name,
   checked,
   cls,
 }: {
   label: string;
+  description?: string;
   name: string;
   checked: boolean;
   cls?: string;
 }) => {
   return (
-    <label class={labelCls + " " + cls}>
-      <input
-        type="checkbox"
-        name={name}
-        checked={checked}
-        class="sr-only peer"
-      />
-      <div class={divCls}></div>
-      <span class={spanCls}>{label}</span>
-    </label>
+    <div>
+      <label class={labelCls + " " + cls}>
+        <input
+          type="checkbox"
+          name={name}
+          checked={checked}
+          class="sr-only peer"
+        />
+        <div class={divCls}></div>
+        <span class={spanCls}>{label}</span>
+      </label>
+
+      {description && <p class="text-sm text-gray-500">{description}</p>}
+    </div>
   );
 };

@@ -1,8 +1,8 @@
 import { useVisibleTask$, type Signal, component$, useSignal } from "@builder.io/qwik";
 
-const labelCls = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
+const labelCls = "block text-sm font-medium text-gray-900 dark:text-white";
 const inputCls =
-  "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
+  "mt-1 mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 
 export const AutoFocusedInput = component$(({
   label,
@@ -59,6 +59,7 @@ export const AutoFocusedInput = component$(({
 
 export const Input = ({
   label,
+  description,
   signal,
   value,
   required,
@@ -75,6 +76,7 @@ export const Input = ({
 }: {
   id: string;
   label?: string;
+  description?: string;
   signal?: Signal;
   value?: string | number;
   placeholder?: string;
@@ -95,6 +97,7 @@ export const Input = ({
           {label + (disabled ? " (disabled)" : "")}
         </label>
       )}
+      {description && <p class="text-sm text-gray-500">{description}</p>}
       <input
         ref={ref}
         disabled={disabled}

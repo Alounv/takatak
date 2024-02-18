@@ -53,6 +53,7 @@ const Progress = ({
             >
               {count > 0 && (
                 <span
+                  title={`${key}: ${count}`}
                   class={`text-xs pl-1 absolute ${
                     i % 2 === 0 ? "translate-y-4" : "-translate-y-4"
                   }`}
@@ -132,14 +133,25 @@ const getCategoryColor = (k: string) => {
 const getCategories = (repartition: Repartition | undefined) => {
   if (!repartition) return [];
 
-  return Object.entries(repartition || {})
+  const cats = Object.entries(repartition || {})
     .filter(([k]) => k !== "total")
     .map(([k, v]) => {
       const color = getCategoryColor(k);
       const percent = ((v / (repartition?.total || 1)) * 100).toFixed(0);
       return { key: k, count: v, color, percent };
     });
+
+  cats.sort((a, b) => sortCategories(a.key, b.key));
+  return cats;
 };
+
+function sortCategories(a: string, b: string) {
+  if (a === "validated") return 1;
+  if (b === "validated") return -1;
+  if (a === "remaining") return -1;
+  if (b === "remaining") return 1;
+  return parseInt(a) - parseInt(b);
+}
 
 // bg-pink-100
 // bg-pink-200

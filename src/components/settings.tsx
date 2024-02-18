@@ -108,6 +108,7 @@ export const CreatePreset = component$(() => {
   return (
     <Form action={createAction} class="flex items-end gap-3 mt-3">
       <Input
+        innerCls="mb-0"
         type="text"
         name="name"
         required
@@ -129,17 +130,19 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
       <Form action={updateAction} class="flex flex-col gap-2 w-full">
         <input type="hidden" name="id" value={preset.id} />
         <div class="flex gap-4">
-          <div class="flex flex-col gap-1">
+          <div class="flex flex-col gap-1 flex-1">
             <Input
               id="name"
               type="text"
               name="name"
               value={preset.name}
               label="Name"
+              description="Name of the preset"
               disabled={!!preset.isShared}
             />
             <Input
               label="Session length"
+              description="Length of the session in words"
               id="sessionLength"
               type="number"
               name="sessionLength"
@@ -147,6 +150,7 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
             />
             <Input
               label="Validation speed (WPM)"
+              description="For word to be considered valid, it must be typed at this speed for the last R repetitions"
               id="speed"
               type="number"
               name="speed"
@@ -154,7 +158,8 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
             />
             <Slider
               id="repetitions"
-              label="Repetitions used to calculate speed"
+              label="R Repetitions"
+              description="Number of repetitions used to calculate the speed"
               name="repetitions"
               value={preset.repetitions}
               max={3}
@@ -163,12 +168,14 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               cls="mt-4"
               label="Highlight letter"
               name="highlightLetter"
+              description="Highlight the letter instead of the word"
               checked={preset.highlightLetter || false}
             />
             <Toggle
               cls="mt-4"
               label="Forbid simple letter backspace"
               name="forbidSimpleLetterBackspace"
+              description="Forbid the use of the backspace to correct a single letter, forcing the user to delete the whole word with ALT + Backspace."
               checked={preset.forbidSimpleLetterBackspace || false}
             />
             <Button type="submit" cls="mt-4">
@@ -176,19 +183,20 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
             </Button>
           </div>
 
-          <div class="flex-1">
+          <div class="flex flex-col gap-1 flex-1">
             <TextArea
               id="text"
               cls="flex-1"
               name="text"
               value={preset.text}
               label="Words to learn"
-              rows={9}
+              description="List of words to practice, separated by a space or a new line. Order may be important if you use the corpus size."
+              rows={16}
               disabled={!!preset.isShared}
             />
             <Input
-              cls="mt-2"
-              label="Letters that count as 2 letters in WPM"
+              label="Special letters"
+              description="Letters counted as two letters, artificially increasing the WPM on the words containing them."
               id="doubleLetters"
               type="text"
               name="doubleLetters"
@@ -197,6 +205,7 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
             <Slider
               id="corpusSize"
               name="corpusSize"
+              description="To practice on a subset of the words (the first ones)"
               value={preset.corpusSize || totalCorpusSize}
               max={totalCorpusSize}
               label="Corpus size"
