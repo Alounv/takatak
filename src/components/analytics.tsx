@@ -11,11 +11,16 @@ export const Analytics = component$(
     return (
       <div class="flex flex-col gap-2">
         {pastWordsRepartition && (
-          <Progress repartition={pastWordsRepartition} title={`6 h ago`} />
+          <Progress repartition={pastWordsRepartition} title={`6 h ago (*)`} />
         )}
         {wordsRepartition && (
           <Progress repartition={wordsRepartition} title={`Current`} />
         )}
+        <div class="text-xs font-normal text-gray-500">
+          {
+            "* past data can change since we keep only the last 6 typing occurences of each word"
+          }
+        </div>
         <Categories
           wordsRepartition={wordsRepartition}
           pastWordsRepartition={pastWordsRepartition}
@@ -40,30 +45,32 @@ const Progress = ({
 }) => {
   const categories = getCategories(repartition);
   return (
-    <div class="flex items-center gap-4">
-      <div class="text-sm w-20 font-medium">{title}</div>
-      <div class="flex w-full my-3 gap-1">
-        {categories.map(({ key, color, percent, count }, i) => {
-          return (
-            <div
-              key={key}
-              class={`flex flex-col rounded-sm h-3 ${color} transition-all`}
-              style={{ width: `${percent}%` }}
-              title={`${key}: ${count}`}
-            >
-              {count > 0 && (
-                <span
-                  title={`${key}: ${count}`}
-                  class={`text-xs pl-1 absolute ${
-                    i % 2 === 0 ? "translate-y-4" : "-translate-y-4"
-                  }`}
-                >
-                  {count}
-                </span>
-              )}
-            </div>
-          );
-        })}
+    <div class="flex flex-col gap-2">
+      <div class="flex items-center gap-4">
+        <div class="text-sm w-20 font-medium">{title}</div>
+        <div class="flex w-full my-3 gap-1">
+          {categories.map(({ key, color, percent, count }, i) => {
+            return (
+              <div
+                key={key}
+                class={`flex flex-col rounded-sm h-3 ${color} transition-all`}
+                style={{ width: `${percent}%` }}
+                title={`${key}: ${count}`}
+              >
+                {count > 0 && (
+                  <span
+                    title={`${key}: ${count}`}
+                    class={`text-xs pl-1 absolute ${
+                      i % 2 === 0 ? "translate-y-4" : "-translate-y-4"
+                    }`}
+                  >
+                    {count}
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
