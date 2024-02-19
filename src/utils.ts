@@ -8,7 +8,11 @@ export const getIsMatching = ({
   input: string;
 }) => {
   if (!target) return false;
-  return target.startsWith(input) || LONG_CHARS.includes(input.slice(-1));
+  const trimmedInput = input.trim();
+  return (
+    target.startsWith(trimmedInput) ||
+    LONG_CHARS.includes(trimmedInput.slice(-1))
+  );
 };
 
 export const getWordsFromText = (text: string = "") => {

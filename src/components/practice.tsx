@@ -24,6 +24,7 @@ export const Practice = component$(() => {
   const previousErrors = useSignal<number[]>([]);
   const cachedWords = useSignal<string[]>([]);
   const cachedWordsRepartition = useSignal<Repartition | undefined>();
+  const cachedPastRepartition = useSignal<Repartition | undefined>();
   const finishSignal = useSignal(false);
 
   // --- loaders ---
@@ -38,6 +39,7 @@ export const Practice = component$(() => {
   useVisibleTask$(() => {
     cachedWords.value = words;
     cachedWordsRepartition.value = wordsRepartition;
+    cachedPastRepartition.value = pastRepartition;
   });
 
   const currentWord = useComputed$(
@@ -51,7 +53,7 @@ export const Practice = component$(() => {
 
   useVisibleTask$(({ track }) => {
     track(() => lastErrorSignal.value);
-    previousErrors.value = [...previousErrors.value, indexSignal.value];
+    previousErrors.value = [...previousErrors.value, lastErrorSignal.value];
   });
 
   useVisibleTask$(({ track }) => {
@@ -108,6 +110,7 @@ export const Practice = component$(() => {
     }
   });
 
+
   return (
     <div class="flex flex-col gap-10">
       {finishSignal.value && (
@@ -117,7 +120,7 @@ export const Practice = component$(() => {
       <Title preset={preset} />
 
       <Analytics
-        pastWordsRepartition={pastRepartition}
+        pastWordsRepartition={cachedPastRepartition.value}
         wordsRepartition={
           finishSignal.value ? wordsRepartition : cachedWordsRepartition.value
         }
