@@ -172,14 +172,17 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
     },
   );
 
-  const factor = Math.min(2, preset.sessionLength / nonValidatedWords.length);
+  const factor = Math.min(
+    preset.repetitions,
+    preset.sessionLength / nonValidatedWords.length,
+  );
 
   const words = new Array(Math.ceil(factor))
     .fill(nonValidatedWords)
     .flat()
     .slice(0, preset.sessionLength - 1)
-    .map((w) => w.word)
-    .sort(() => Math.random() - 0.5);
+    .map((w) => w.word);
+  // .sort(() => Math.random() - 0.5);
 
   const { wordsRepartition: pastRepartition } = await getAnalyticsForPreset(
     db,
