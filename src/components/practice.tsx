@@ -17,12 +17,12 @@ import { SuccessMessage } from "./placeholder";
 
 export const Practice = component$(() => {
   // --- states ---
-  const indexSignal = useSignal(0);
+  const indexSignal = useSignal(-1);
   const inputSignal = useSignal("");
   const startTime = useSignal(0);
   const lastErrorSignal = useSignal(-1);
   const previousErrors = useSignal<number[]>([]);
-  const cachedWords = useSignal<string[]>([]);
+  const cachedWords = useSignal<{ speed: number; word: string }[]>([]);
   const cachedWordsRepartition = useSignal<Repartition | undefined>();
   const cachedPastRepartition = useSignal<Repartition | undefined>();
   const finishSignal = useSignal(false);
@@ -31,6 +31,8 @@ export const Practice = component$(() => {
   const {
     value: { preset, words = [], wordsRepartition, pastRepartition },
   } = usePresetAndTrainingWords();
+  const length = words.length;
+  const isExerciseFinished = indexSignal.value === length;
 
   // --- actions ---
   const saveResultAction = useSaveData();
@@ -43,7 +45,7 @@ export const Practice = component$(() => {
   });
 
   const currentWord = useComputed$(
-    () => cachedWords.value?.[indexSignal.value],
+    () => cachedWords.value?.[indexSignal.value]?.word || "",
   );
 
   const hasError = !getIsMatching({
@@ -57,32 +59,34 @@ export const Practice = component$(() => {
   });
 
   useVisibleTask$(({ track }) => {
-    const input = track(() => inputSignal.value);
     const index = track(() => indexSignal.value);
-    // first letter typed
-    if (index === 0 && input.length === 1) {
+    const input = track(() => inputSignal.value);
+    if (index === -1 && input === " ") {
+      inputSignal.value = "";
+      indexSignal.value = 0;
       startTime.value = Date.now();
     }
   });
 
   useVisibleTask$(({ track }) => {
-    if (!currentWord.value) {
+    const index = track(() => indexSignal.value);
+    if (index === -1) return;
+
+    const input = track(() => inputSignal.value);
+    const target = track(() => currentWord.value);
+    if (!target) {
       finishSignal.value = true;
       return;
     }
 
-    const isFinished = track(() => {
-      return inputSignal.value === currentWord.value + " ";
-    });
-
+    const isFinished = input === target + " ";
+    console.log("isFinished", isFinished);
     if (isFinished) {
-      if (currentWord.value !== " ") {
-        const duration = Date.now() - startTime.value;
-        saveResultAction.submit({
-          duration,
-          word: currentWord.value,
-        });
-      }
+      const duration = Date.now() - startTime.value;
+      saveResultAction.submit({
+        duration,
+        word: target,
+      });
 
       // Reset state
       inputSignal.value = "";
@@ -110,11 +114,10 @@ export const Practice = component$(() => {
     }
   });
 
-
   return (
     <div class="flex flex-col gap-10">
-      {finishSignal.value && (
-        <Confetti client: load onFinish$={() => window.location.reload()} />
+      {isExerciseFinished && (
+        <Confetti client:load onFinish$={() => window.location.reload()} />
       )}
 
       <Title preset={preset} />
@@ -122,7 +125,7 @@ export const Practice = component$(() => {
       <Analytics
         pastWordsRepartition={cachedPastRepartition.value}
         wordsRepartition={
-          finishSignal.value ? wordsRepartition : cachedWordsRepartition.value
+          isExerciseFinished ? wordsRepartition : cachedWordsRepartition.value
         }
       />
 
@@ -130,6 +133,7 @@ export const Practice = component$(() => {
         <SuccessMessage />
       ) : (
         <Text
+          hasStarted={indexSignal.value > -1}
           words={cachedWords.value}
           previousErrors={previousErrors.value}
           currentIndex={indexSignal.value}
@@ -139,6 +143,7 @@ export const Practice = component$(() => {
       )}
 
       <InputArea
+        hasStarted={indexSignal.value > -1}
         inputSignal={inputSignal}
         ignoresSimpleBackspaces={preset?.forbidSimpleLetterBackspace ?? false}
       />

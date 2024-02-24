@@ -32,6 +32,7 @@ const Word = ({
   hadError,
   hasError,
   word,
+  speed,
   input,
 }: {
   index: number;
@@ -39,16 +40,16 @@ const Word = ({
   hadError: boolean;
   hasError: boolean;
   word: string;
+  speed: number;
   key: number;
   input?: string;
 }) => {
   if (input && index === currentIndex) {
     return (
-      <span class="flex">
+      <span class="flex" title={`${speed} wpm`}>
         {word.split("").map((c, i) => {
-          const cls = getLetterClass(i, input.length, hasError);
           return (
-            <span key={i} class={`${cls}`}>
+            <span key={i} class={getLetterClass(i, input.length, hasError)}>
               {c}
             </span>
           );
@@ -58,7 +59,11 @@ const Word = ({
   }
 
   const cls = getWordClass(index, currentIndex, hadError, hasError);
-  return <span class={`${cls}`}>{word} </span>;
+  return (
+    <span class={`${cls}`} title={`${speed} wpm`}>
+      {word}{" "}
+    </span>
+  );
 };
 
 export const Text = ({
@@ -66,25 +71,29 @@ export const Text = ({
   currentIndex,
   hasError,
   previousErrors,
+  hasStarted,
   input,
 }: {
-  words: string[];
+  words: { speed: number; word: string }[];
   currentIndex: number;
   hasError: boolean;
   previousErrors: number[];
   input?: string;
+  hasStarted: boolean;
 }) => {
   return (
     <div class="flex  flex-wrap items-center gap-1.5 text-lg tracking-wider">
+      {!hasStarted ? <Start words={words} /> : null}
       {words.map((word, i) =>
-        word === " " ? null : (
+        word.word === " " ? null : (
           <Word
             key={i}
             index={i}
             currentIndex={currentIndex}
             hadError={previousErrors.includes(i)}
             hasError={hasError}
-            word={word}
+            word={word.word}
+            speed={word.speed}
             input={input}
           />
         ),
@@ -92,3 +101,15 @@ export const Text = ({
     </div>
   );
 };
+
+function Start({ words }: { words: { speed: number; word: string }[] }) {
+  const speeds = words.map((w) => w.speed);
+  const max = Math.max(...speeds);
+  const min = Math.min(...speeds);
+  return (
+    <>
+      <div class="text-gray-500 text-sm">{`(${max}-${min})`}</div>
+      <div>{`[space]`}</div>
+    </>
+  );
+}
