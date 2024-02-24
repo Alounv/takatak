@@ -79,14 +79,18 @@ export const Practice = component$(() => {
       return;
     }
 
-    const isFinished = input === target + " ";
-    console.log("isFinished", isFinished);
-    if (isFinished) {
+    if (input === target + " ") {
       const duration = Date.now() - startTime.value;
       saveResultAction.submit({
         duration,
         word: target,
       });
+
+      // Update speed
+      const speed = Math.round(
+        (((target.length + 1) / (duration / 1000)) * 60) / 5,
+      );
+      cachedWords.value[index].speed = speed;
 
       // Reset state
       inputSignal.value = "";
@@ -135,7 +139,7 @@ export const Practice = component$(() => {
         <Text
           hasFinished={isExerciseFinished}
           hasStarted={indexSignal.value > -1}
-          words={isExerciseFinished ? words : cachedWords.value}
+          words={cachedWords.value}
           previousErrors={previousErrors.value}
           currentIndex={indexSignal.value}
           hasError={hasError}
