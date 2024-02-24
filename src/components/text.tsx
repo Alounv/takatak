@@ -34,6 +34,7 @@ const Word = ({
   word,
   speed,
   input,
+  showSpeed,
 }: {
   index: number;
   currentIndex: number;
@@ -43,6 +44,7 @@ const Word = ({
   speed: number;
   key: number;
   input?: string;
+  showSpeed?: boolean;
 }) => {
   if (input && index === currentIndex) {
     return (
@@ -60,9 +62,12 @@ const Word = ({
 
   const cls = getWordClass(index, currentIndex, hadError, hasError);
   return (
-    <span class={`${cls}`} title={`${speed} wpm`}>
-      {word}{" "}
-    </span>
+    <>
+      <span class={cls} title={`${speed} wpm`}>
+        {word}{" "}
+      </span>
+      {showSpeed ? <span class="text-sm">{speed} </span> : null}
+    </>
   );
 };
 
@@ -72,6 +77,7 @@ export const Text = ({
   hasError,
   previousErrors,
   hasStarted,
+  hasFinished,
   input,
 }: {
   words: { speed: number; word: string }[];
@@ -80,6 +86,7 @@ export const Text = ({
   previousErrors: number[];
   input?: string;
   hasStarted: boolean;
+  hasFinished: boolean;
 }) => {
   return (
     <div class="flex  flex-wrap items-center gap-1.5 text-lg tracking-wider">
@@ -95,6 +102,7 @@ export const Text = ({
             word={word.word}
             speed={word.speed}
             input={input}
+            showSpeed={hasFinished}
           />
         ),
       )}

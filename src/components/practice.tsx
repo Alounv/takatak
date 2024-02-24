@@ -133,6 +133,7 @@ export const Practice = component$(() => {
         <SuccessMessage />
       ) : (
         <Text
+          hasFinished={isExerciseFinished}
           hasStarted={indexSignal.value > -1}
           words={cachedWords.value}
           previousErrors={previousErrors.value}
