@@ -1,3 +1,4 @@
+import { Link } from "@builder.io/qwik-city";
 import { Settings } from "./logo";
 import { LINK_STYLE } from "./nav";
 
@@ -10,10 +11,10 @@ export const SuccessMessage = () => (
     </span>
 
     <div class="ml-2 flex items-baseline space-x-4">
-      <a href="/settings" class={`${LINK_STYLE} flex gap-2 items-center`}>
+      <Link href="/settings" class={`${LINK_STYLE} flex gap-2 items-center`}>
         <Settings />
         Settings
-      </a>
+      </Link>
     </div>
   </div>
 );
