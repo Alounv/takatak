@@ -4,6 +4,7 @@ import {
   useSignal,
   useVisibleTask$,
   $,
+  QRL,
 } from "@builder.io/qwik";
 import { Text } from "./text";
 import { InputArea } from "./input";
@@ -11,7 +12,7 @@ import { getIsMatching } from "~/utils";
 import { useSaveData, useSaveError } from "~/routes/plugin@save";
 import { Confetti } from "~/integrations/react/confetti";
 import { SuccessMessage } from "./placeholder";
-import { Preset } from "~/server/db/schema";
+import type { Preset } from "~/server/db/schema";
 
 export const InteractivePractice = component$(
   ({
@@ -21,7 +22,7 @@ export const InteractivePractice = component$(
   }: {
     preset: Preset;
     words: { speed: number; word: string }[];
-    reset: () => void;
+    reset: QRL<() => void>;
   }) => {
     // --- states ---
     const indexSignal = useSignal(-1);
