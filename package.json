@@ -2,7 +2,7 @@
   "name": "takatak",
   "description": "Takatak",
   "engines": {
-    "node": "18.18.2"
+    "node": "20"
   },
   "private": true,
   "scripts": {
