@@ -189,7 +189,7 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
       preset,
       presetWords,
       userId: user.id,
-      cutoffDate: new Date(Date.now() - 6 * 60 * 60 * 1000),
+      cutoffDate: new Date(Date.now() - 1 * 60 * 60 * 1000),
     },
   );
 
