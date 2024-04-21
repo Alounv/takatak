@@ -129,21 +129,19 @@ const getAnalyticsForPreset = async (
     cutoffDate?: Date;
   },
 ) => {
-  const { nonValidatedWords, wordsRepartition } = await getAnalyticsPerWord(
-    db,
-    {
-      userId: userId,
-      repetitions: preset.repetitions,
-      currentWords: presetWords,
-      targetSpeed: preset.speed,
-      doubleLetters: preset.doubleLetters || "",
-      cutoffDate,
-    },
-  );
+  const { words, wordsRepartition } = await getAnalyticsPerWord(db, {
+    userId: userId,
+    repetitions: preset.repetitions,
+    currentWords: presetWords,
+    targetSpeed: preset.speed,
+    doubleLetters: preset.doubleLetters || "",
+    cutoffDate,
+  });
 
   return {
     preset,
-    nonValidatedWords,
+    words,
+    nonValidatedWords: words.filter((w) => w.speed < preset.speed),
     wordsRepartition: {
       ...wordsRepartition,
       total: presetWords.length,
@@ -163,14 +161,15 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
     ? getWordsFromText(preset.text).slice(0, preset.corpusSize)
     : getWordsFromText(preset.text);
 
-  const { wordsRepartition, nonValidatedWords } = await getAnalyticsForPreset(
-    db,
-    {
-      preset,
-      presetWords,
-      userId: user.id,
-    },
-  );
+  const {
+    wordsRepartition,
+    words: allWords,
+    nonValidatedWords,
+  } = await getAnalyticsForPreset(db, {
+    preset,
+    presetWords,
+    userId: user.id,
+  });
 
   const factor = Math.min(
     preset.repetitions,
@@ -193,10 +192,21 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
     },
   );
 
+  const groupedWords = [];
+  const step = Math.ceil(allWords.length / 30);
+  for (let i = 0; i < allWords.length; i += step) {
+    const speed = allWords
+      .slice(i, i + step)
+      .reduce((acc, w) => acc + w.speed, 0);
+    const roundedSpeed = Math.round(speed * 10) / (step * 10);
+    groupedWords.push(roundedSpeed);
+  }
+
   return {
     success: true,
     preset,
     words,
+    allWords: groupedWords,
     wordsRepartition,
     pastRepartition,
   };

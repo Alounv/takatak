@@ -63,8 +63,10 @@
     "@neondatabase/serverless": "0.6.0",
     "drizzle-orm": "0.28.6",
     "flowbite": "^1.8.1",
+    "latest": "^0.2.0",
     "openai": "4.6.0",
     "react-confetti": "^6.1.0",
+    "recharts": "^2.12.6",
     "tailwindcss": "3.3.3",
     "zod": "3.22.2"
   }

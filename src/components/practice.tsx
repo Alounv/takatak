@@ -4,11 +4,13 @@ import type { Repartition } from "./analytics";
 import { Analytics } from "./analytics";
 import { Title } from "./practice-title";
 import { InteractivePractice } from "./interactive-practice";
+import { Chart } from "~/integrations/react/chart";
 
 export const Practice = component$(() => {
   const cache = useSignal<
     | {
         words: { speed: number; word: string }[] | undefined;
+        allWords: number[] | undefined;
         wordsRepartition: Repartition | undefined;
         pastRepartition: Repartition | undefined;
       }
@@ -22,6 +24,7 @@ export const Practice = component$(() => {
       words: serverSignal.value.words,
       wordsRepartition: serverSignal.value.wordsRepartition,
       pastRepartition: serverSignal.value.pastRepartition,
+      allWords: serverSignal.value.allWords,
     };
   });
 
@@ -45,6 +48,22 @@ export const Practice = component$(() => {
           reset={reset}
         />
       )}
+
+      <WordChart
+        words={cache.value?.allWords ?? []}
+        limit={serverSignal.value.preset?.speed ?? 0}
+      />
     </div>
   );
 });
+
+function WordChart({ words, limit }: { words: number[]; limit: number }) {
+  if (!words.length) return null;
+  const data = words.map((w) => {
+    const v = w > limit ? w : 0;
+    const nv = w <= limit ? w : 0;
+    return { x: `${w}`, v, nv };
+  });
+  data.reverse();
+  return <Chart data={data} />;
+}
