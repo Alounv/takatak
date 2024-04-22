@@ -195,10 +195,9 @@ export const usePresetAndTrainingWords = routeLoader$(async ({ cookie }) => {
   const groupedWords = [];
   const step = Math.ceil(allWords.length / 30);
   for (let i = 0; i < allWords.length; i += step) {
-    const speed = allWords
-      .slice(i, i + step)
-      .reduce((acc, w) => acc + w.speed, 0);
-    const roundedSpeed = Math.round(speed * 10) / (step * 10);
+    const words = allWords.slice(i, i + step);
+    const speed = words.reduce((acc, w) => acc + w.speed, 0);
+    const roundedSpeed = Math.round(speed * 10) / (words.length * 10);
     groupedWords.push(roundedSpeed);
   }
 
