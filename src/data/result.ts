@@ -82,7 +82,6 @@ export async function getAnalyticsPerWord(
 
     const lettersCount =
       r.word.length + // word
-      1 + // space
       r.word.split("").filter((l) => doubleLetters.includes(l)).length; // double letters
     const speeds = r.lastDurations.map(
       (d) => ((lettersCount / (d / 1000)) * 60) / 5,

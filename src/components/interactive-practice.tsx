@@ -1,10 +1,10 @@
+import type { QRL } from "@builder.io/qwik";
 import {
   component$,
   useComputed$,
   useSignal,
   useVisibleTask$,
   $,
-  QRL,
 } from "@builder.io/qwik";
 import { Text } from "./text";
 import { InputArea } from "./input";
@@ -62,7 +62,7 @@ export const InteractivePractice = component$(
     });
 
     /*
-     * If this is the first space typed, initialize the time
+     * If this is the first space typed, initialize
      */
     useVisibleTask$(({ track }) => {
       const index = track(() => indexSignal.value);
@@ -70,7 +70,6 @@ export const InteractivePractice = component$(
       if (index === -1 && input === " ") {
         inputSignal.value = "";
         indexSignal.value = 0;
-        startTime.value = Date.now();
       }
     });
 
@@ -89,24 +88,28 @@ export const InteractivePractice = component$(
         return;
       }
 
+      //  We start the timer when the first letter is typed
+      //  Not ideal here because if the user backspaces to one letter the timer will reset
+      if (input.length === 1) {
+        startTime.value = Date.now();
+        return;
+      }
+
+      // When the space is hit after correctly typing the word
       if (input === target + " ") {
         const duration = Date.now() - startTime.value;
         // Save the result
-        saveResultAction.submit({
-          duration,
-          word: target,
-        });
+        saveResultAction.submit({ duration, word: target });
 
-        // Update speed of the word
+        // Update speed of the word for local display
         const speed = Math.round(
-          (((target.length + 1) / (duration / 1000)) * 60) / 5,
+          ((target.length / (duration / 1000)) * 60) / 5,
         );
         words[index].speed = speed;
 
         // Move to next word
         inputSignal.value = "";
         indexSignal.value++;
-        startTime.value = Date.now();
 
         return;
       }
