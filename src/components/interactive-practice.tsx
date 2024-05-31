@@ -89,9 +89,9 @@ export const InteractivePractice = component$(
       }
 
       //  We start the timer when the first letter is typed
-      //  Not ideal here because if the user backspaces to one letter the timer will reset
       const now = Date.now();
       if (input.length > 0 && !startTime.value) {
+        console.log("start");
         startTime.value = now;
         return;
       }
@@ -99,6 +99,7 @@ export const InteractivePractice = component$(
       // When the space is hit after correctly typing the word
       if (input === target + " ") {
         const duration = Date.now() - startTime.value;
+        console.log("end");
         startTime.value = 0;
         // Save the result
         saveResultAction.submit({ duration, word: target });
@@ -147,6 +148,7 @@ export const InteractivePractice = component$(
             previousErrors={previousErrors.value}
             currentIndex={indexSignal.value}
             hasError={hasError.value}
+            target={preset.speed}
             input={preset.highlightLetter ? inputSignal.value : undefined}
           />
         )}
