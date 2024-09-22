@@ -134,9 +134,22 @@ export const InteractivePractice = component$(
       }
     });
 
+    useVisibleTask$(({ track }) => {
+      const index = track(() => indexSignal.value);
+      const isExerciseFinished = index === words?.length;
+
+      if (isExerciseFinished) {
+        const interval = setTimeout(() => {
+          onFinish();
+        }, 4000);
+
+        return () => clearTimeout(interval);
+      }
+    });
+
     return (
       <>
-        {isExerciseFinished && <Confetti client:load onFinish$={onFinish} />}
+        {isExerciseFinished && <Confetti client: load onFinish$={() => { }} />}
 
         {words.length <= 1 ? (
           <SuccessMessage />
