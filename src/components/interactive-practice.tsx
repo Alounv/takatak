@@ -91,15 +91,19 @@ export const InteractivePractice = component$(
       //  We start the timer when the first letter is typed
       const now = Date.now();
       if (input.length > 0 && !startTime.value) {
-        console.log("start");
         startTime.value = now;
         return;
       }
 
       // When the space is hit after correctly typing the word
       if (input === target + " ") {
-        const duration = Date.now() - startTime.value;
-        console.log("end");
+        let duration = Date.now() - startTime.value;
+
+        // If there is an error, double the saved duration (penalty on top of the time to write it corectly)
+        if (hasError.value) {
+          duration= duration*2
+        }
+
         startTime.value = 0;
         // Save the result
         saveResultAction.submit({ duration, word: target });
