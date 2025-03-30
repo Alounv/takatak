@@ -162,7 +162,7 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               description="Number of repetitions used to calculate the speed"
               name="repetitions"
               value={preset.repetitions}
-              max={3}
+              max={6}
             />
             <Toggle
               cls="mt-4"
