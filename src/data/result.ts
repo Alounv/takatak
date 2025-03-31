@@ -87,7 +87,7 @@ export async function getAnalyticsPerWord(
       (d) => ((lettersCount / (d / 1000)) * 60) / 5,
     );
 
-    const speed = speeds.reduce((a, b) => a + b, 0) / speeds.length;
+    const speed = Math.min(...speeds); // keep the minimum speed
     const roundedSpeed = Math.round(speed * 10) / 10;
 
     let isValidated = false;

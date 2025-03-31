@@ -16,6 +16,8 @@ import { useGetCurrentUser } from "~/routes/plugin@user";
 import type { Preset } from "~/server/db/schema";
 import { getWordsFromText } from "~/utils";
 
+const MAX_REPETITIONS = 6; // do not put higher since we never keep more than 6 repetitions
+
 export const Settings = component$(() => {
   const user = useGetCurrentUser();
   const presets = useListPresets();
@@ -162,7 +164,7 @@ export const PresetEdition = component$(({ preset }: { preset: Preset }) => {
               description="Number of repetitions used to calculate the speed"
               name="repetitions"
               value={preset.repetitions}
-              max={6}
+              max={MAX_REPETITIONS}
             />
             <Toggle
               cls="mt-4"
